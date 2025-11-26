@@ -44,7 +44,7 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 - Handle errors appropriately in async code with try-catch blocks
 - Don't use async functions as Promise executors
 
-### React & JSX
+### React Native & JSX
 
 - Use function components over class components
 - Call hooks at the top level only, never conditionally
@@ -52,12 +52,13 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 - Use the `key` prop for elements in iterables (prefer unique IDs over array indices)
 - Nest children between opening and closing tags instead of passing as props
 - Don't define components inside other components
-- Use semantic HTML and ARIA attributes for accessibility:
-  - Provide meaningful alt text for images
-  - Use proper heading hierarchy
-  - Add labels for form inputs
-  - Include keyboard event handlers alongside mouse events
-  - Use semantic elements (`<button>`, `<nav>`, etc.) instead of divs with roles
+- Follow React Native accessibility best practices:
+  - Add `accessible={true}` and `accessibilityLabel` to interactive elements
+  - Use `accessibilityRole` to indicate component purpose (button, header, link, etc.)
+  - Include `accessibilityHint` for additional context when needed
+  - Use `accessibilityState` to communicate state (disabled, selected, etc.)
+  - Ensure sufficient touch target sizes (minimum 44x44 points)
+  - Test with TalkBack (Android) and VoiceOver (iOS)
 
 ### Error Handling & Debugging
 
