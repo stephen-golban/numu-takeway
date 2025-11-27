@@ -1,0 +1,124 @@
+📝
+
+Senior React Native Developer Takeaway Assignment
+
+📋 Assignment Overview
+
+Build a React Native mobile application using Expo that enables users to interact
+with YO Protocol vaults. This assignment tests your ability to integrate Web3
+wallet connectivity, work with DeFi protocols, and create a clean mobile interface.
+
+⏱️ Time Estimate
+🎯 Core Requirements
+3 Working Days
+
+1. Wallet Connection
+Implement wallet connectivity using Reown AppKit for React Native
+Support at least WalletConnect-compatible wallets
+Display connected wallet address in the UI
+Allow users to disconnect their wallet
+
+Senior React Native Developer - Takeaway Assignment
+
+1
+
+Switch the user chain to the Base network; all operations will be executed in
+the Base network
+
+2. YO Vault Integration
+Integrate with YO Protocol using the YoGateway Integration Guide
+Display user's vault balance (yoUSD or other supported assets)
+Implement deposit functionality to add funds to vaults
+Implement withdraw functionality to remove funds from vaults
+Show transaction status and handle errors gracefully
+
+3. UI/UX Requirements
+Use NativeWind CSS for all styling
+Use components from React Native Reusables
+Create a clean, presentable interface (pixel-perfect design not required)
+Ensure the app is functional and easy to navigate
+
+🌟 Bonus Features (Optional)
+Implement one or both of the following:
+
+Option A: Passkey Authentication
+Integrate passkeys (biometric/PIN) to authenticate when opening the app
+Store authentication state securely
+Allow users to enable/disable this feature
+
+Option B: Home Screen Widget
+Create a home screen widget that displays the user's yoUSD balance
+The widget should update periodically
+Handle cases where the wallet is not connected
+
+📦
+Senior React Native Developer - Takeaway Assignment
+
+2
+
+📦 Deliverables
+1. GitHub Repository
+Clean, well-organized code with a clear folder structure
+Meaningful commit messages
+Include a comprehensive README.md with:
+Project description
+Prerequisites and dependencies
+Setup Instructions (Environment Variables, API Keys, etc.)
+How to run the project with Expo
+Testing instructions
+Any assumptions or design decisions made
+
+2. APK File
+Provide a compiled APK for local testing on Android devices
+Include instructions on how to install and test the APK
+
+🛠️ Technical Stack
+
+Framework: React Native with Expo
+Styling: NativeWind CSS
+UI Components: React Native Reusables
+Wallet Connection: Reown AppKit for React Native
+Web3 Integration: YO Protocol (YoGateway)
+
+✅ Evaluation Criteria
+
+Functionality (40%): All core features work as expected
+Code Quality (30%): Clean, readable, and well-structured code
+
+Senior React Native Developer - Takeaway Assignment
+
+3
+
+Integration (20%): Proper implementation of wallet connection and YO
+Protocol integration
+Documentation (10%): Clear README and setup instructions
+Bonus: Extra points for implementing optional features
+
+📝 Notes
+
+AI usage is allowed and encouraged for speeding up development
+Focus on functionality over visual polish
+Handle edge cases and errors appropriately
+Test on both Expo Go and a compiled APK
+Feel free to make reasonable assumptions, but document them in your
+README
+
+💰 Testing Funds
+
+Once you’re done with your implementation, email shaan@numu.xyz for testing
+funds on the Base network
+
+❓ Questions?
+
+If you have any questions about the requirements or need clarification, please
+reach out to shaan@numu.xyz
+
+Good luck! We're excited to see what you build.
+
+Senior React Native Developer - Takeaway Assignment
+
+🚀
+
+4
+
+
