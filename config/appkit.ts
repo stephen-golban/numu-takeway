@@ -2,7 +2,7 @@ import "@walletconnect/react-native-compat";
 
 import { EthersAdapter } from "@reown/appkit-ethers-react-native";
 import { type AppKitNetwork, createAppKit } from "@reown/appkit-react-native";
-import { appKitStorage } from "./storage";
+import { appKitStorage } from "./appkit-storage";
 
 const base: AppKitNetwork = {
   id: 8453,

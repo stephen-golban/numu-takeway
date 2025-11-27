@@ -1,7 +1,7 @@
 import { WalletIcon } from "lucide-react-native";
 import { View } from "react-native";
-import type { VaultAsset } from "@/screens/home/type";
 import { formatVaultCount } from "@/screens/home/util";
+import type { VaultAsset } from "@/typings/vault";
 import { AssetCard } from "./ui/asset-card";
 import { EmptyState } from "./ui/empty-state";
 import { Text } from "./ui/text";

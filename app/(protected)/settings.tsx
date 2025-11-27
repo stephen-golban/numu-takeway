@@ -191,10 +191,14 @@ function ThemeOptionButton({ icon, isSelected, label, onPress }: ThemeOptionButt
 type BiometricToggleProps = {
   disabled: boolean;
   enabled: boolean;
-  onToggle: (enabled: boolean) => void;
+  onToggle: (enabled: boolean) => Promise<boolean>;
 };
 
 function BiometricToggle({ disabled, enabled, onToggle }: BiometricToggleProps) {
+  async function handleToggle() {
+    await onToggle(!enabled);
+  }
+
   return (
     <Pressable
       accessibilityLabel="Toggle biometric authentication"
@@ -206,7 +210,7 @@ function BiometricToggle({ disabled, enabled, onToggle }: BiometricToggleProps) 
         disabled && "opacity-50"
       )}
       disabled={disabled}
-      onPress={() => onToggle(!enabled)}
+      onPress={handleToggle}
     >
       <View className={cn("h-5 w-5 rounded-full bg-background shadow-sm", enabled ? "self-end" : "self-start")} />
     </Pressable>

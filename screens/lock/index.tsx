@@ -4,15 +4,14 @@ import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/providers/auth-provider";
 
-type LockScreenProps = {
-  onUnlock: () => Promise<boolean>;
-};
+const LockScreen = () => {
+  const { authenticate } = useAuth();
 
-const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
   useEffect(() => {
-    onUnlock();
-  }, [onUnlock]);
+    authenticate();
+  }, [authenticate]);
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-background p-6">

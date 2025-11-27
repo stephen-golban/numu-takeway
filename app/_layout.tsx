@@ -2,7 +2,6 @@ import "@/config/appkit";
 import "@/global.css";
 import { SplashScreen, Stack } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { useLockOnBackground } from "@/hooks/use-lock-on-background";
 import { THEME } from "@/lib/theme";
 import AppProviders from "@/providers";
 import { useAuth } from "@/providers/auth-provider";
@@ -23,10 +22,8 @@ export default function RootLayout() {
 }
 
 function RootNavigator({ theme }: { theme: "light" | "dark" }) {
-  const { isLocked, isLoading, lock } = useAuth();
+  const { isLocked, isLoading } = useAuth();
   const backgroundColor = THEME[theme].background;
-
-  useLockOnBackground(lock);
 
   if (!isLoading) {
     SplashScreen.hide();
