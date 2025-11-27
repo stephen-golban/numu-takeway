@@ -1,62 +1,55 @@
-import { Link, Stack } from "expo-router";
-import { MoonStarIcon, StarIcon, SunIcon } from "lucide-react-native";
+import { useAccount } from "@reown/appkit-react-native";
+import { Stack } from "expo-router";
+import { MoonStarIcon, SunIcon } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
-import { Image, type ImageStyle, View } from "react-native";
+import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-
-const LOGO = {
-  light: require("@/assets/images/react-native-reusables-light.png"),
-  dark: require("@/assets/images/react-native-reusables-dark.png"),
-};
+import { WalletButton } from "@/components/wallet/wallet-button";
 
 const SCREEN_OPTIONS = {
-  title: "React Native Reusables",
+  title: "Numu Takeaway",
   headerTransparent: true,
   headerRight: () => <ThemeToggle />,
 };
 
-const IMAGE_STYLE: ImageStyle = {
-  height: 76,
-  width: 76,
-};
-
 export default function Screen() {
-  const { colorScheme } = useColorScheme();
+  const { address, isConnected } = useAccount();
 
   return (
     <>
       <Stack.Screen options={SCREEN_OPTIONS} />
       <View className="flex-1 items-center justify-center gap-8 p-4">
-        <Image
-          resizeMode="contain"
-          source={LOGO[colorScheme ?? "light"]}
-          style={IMAGE_STYLE}
-        />
-        <View className="gap-2 p-4">
-          <Text className="font-mono ios:text-foreground text-muted-foreground text-sm">
-            1. Edit <Text variant="code">app/index.tsx</Text> to get started.
-          </Text>
-          <Text className="font-mono ios:text-foreground text-muted-foreground text-sm">
-            2. Save to see your changes instantly.
+        <View className="items-center gap-4">
+          <Text className="font-bold text-3xl">Numu Takeaway</Text>
+          <Text className="text-center text-muted-foreground">
+            YO Protocol Vault Integration
           </Text>
         </View>
-        <View className="flex-row gap-2">
-          <Link asChild href="https://reactnativereusables.com">
-            <Button>
-              <Text>Browse the Docs</Text>
-            </Button>
-          </Link>
-          <Link
-            asChild
-            href="https://github.com/founded-labs/react-native-reusables"
-          >
-            <Button variant="ghost">
-              <Text>Star the Repo</Text>
-              <Icon as={StarIcon} />
-            </Button>
-          </Link>
+
+        <View className="w-full max-w-sm gap-4 rounded-xl bg-card p-6">
+          <Text className="text-center font-semibold text-lg">
+            {isConnected ? "Wallet Connected" : "Connect Your Wallet"}
+          </Text>
+
+          {isConnected && address ? (
+            <View className="items-center gap-2">
+              <Text className="text-muted-foreground text-sm">
+                Connected Address
+              </Text>
+              <Text className="font-mono text-sm">{address}</Text>
+            </View>
+          ) : (
+            <Text className="text-center text-muted-foreground text-sm">
+              Connect your wallet to interact with YO Protocol vaults on Base
+              network.
+            </Text>
+          )}
+
+          <View className="items-center pt-2">
+            <WalletButton />
+          </View>
         </View>
       </View>
     </>
@@ -73,6 +66,8 @@ function ThemeToggle() {
 
   return (
     <Button
+      accessibilityLabel="Toggle theme"
+      accessibilityRole="button"
       className="web:mx-4 ios:size-9 rounded-full"
       onPressIn={toggleColorScheme}
       size="icon"

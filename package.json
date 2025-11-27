@@ -45,8 +45,7 @@
     "react-native-worklets": "0.5.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.4.14",
-    "tailwindcss-animate": "^1.0.7",
-    "viem": "^2.40.3"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -56,5 +55,8 @@
     "typescript": "~5.9.2",
     "ultracite": "6.3.6"
   },
-  "private": true
+  "private": true,
+  "trustedDependencies": [
+    "react-native-nitro-modules"
+  ]
 }
