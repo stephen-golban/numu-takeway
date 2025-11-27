@@ -1,8 +1,6 @@
 import * as LocalAuthentication from "expo-local-authentication";
+import * as SecureStore from "expo-secure-store";
 import { useCallback, useEffect, useState } from "react";
-import { createMMKV } from "react-native-mmkv";
-
-const storage = createMMKV({ id: "auth" });
 
 const AUTH_ENABLED_KEY = "authEnabled";
 
@@ -16,28 +14,33 @@ type AuthState = {
 export function useAuth() {
   const [state, setState] = useState<AuthState>({
     isLocked: true,
-    isAuthEnabled: storage.getBoolean(AUTH_ENABLED_KEY) ?? false,
+    isAuthEnabled: false,
     isSupported: false,
     authenticationType: [],
   });
 
   useEffect(() => {
-    async function checkSupport() {
-      const hasHardware = await LocalAuthentication.hasHardwareAsync();
-      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-      const authTypes =
-        await LocalAuthentication.supportedAuthenticationTypesAsync();
+    async function initialize() {
+      const [hasHardware, isEnrolled, authTypes, storedEnabled] =
+        await Promise.all([
+          LocalAuthentication.hasHardwareAsync(),
+          LocalAuthentication.isEnrolledAsync(),
+          LocalAuthentication.supportedAuthenticationTypesAsync(),
+          SecureStore.getItemAsync(AUTH_ENABLED_KEY),
+        ]);
 
-      setState((prev) => ({
-        ...prev,
-        isSupported: hasHardware && isEnrolled,
+      const isSupported = hasHardware && isEnrolled;
+      const isAuthEnabled = storedEnabled === "true";
+
+      setState({
+        isSupported,
         authenticationType: authTypes,
-        // If auth is not enabled, don't lock
-        isLocked: prev.isAuthEnabled && hasHardware && isEnrolled,
-      }));
+        isAuthEnabled,
+        isLocked: isAuthEnabled && isSupported,
+      });
     }
 
-    checkSupport();
+    initialize();
   }, []);
 
   const authenticate = useCallback(async (): Promise<boolean> => {
@@ -61,8 +64,11 @@ export function useAuth() {
     return false;
   }, [state.isSupported, state.isAuthEnabled]);
 
-  const setAuthEnabled = useCallback((enabled: boolean) => {
-    storage.set(AUTH_ENABLED_KEY, enabled);
+  const setAuthEnabled = useCallback(async (enabled: boolean) => {
+    await SecureStore.setItemAsync(
+      AUTH_ENABLED_KEY,
+      enabled ? "true" : "false"
+    );
     setState((prev) => ({
       ...prev,
       isAuthEnabled: enabled,
