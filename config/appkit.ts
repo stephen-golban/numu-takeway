@@ -21,9 +21,7 @@ const base: AppKitNetwork = {
 const projectId = process.env.EXPO_PUBLIC_REOWN_PROJECT_ID;
 
 if (!projectId) {
-  throw new Error(
-    "Missing EXPO_PUBLIC_REOWN_PROJECT_ID environment variable. Get one at https://dashboard.reown.com"
-  );
+  throw new Error("Missing EXPO_PUBLIC_REOWN_PROJECT_ID environment variable. Get one at https://dashboard.reown.com");
 }
 
 const ethersAdapter = new EthersAdapter();

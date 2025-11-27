@@ -11,10 +11,7 @@ export default function Root({ children }: PropsWithChildren) {
       <head>
         <meta charSet="utf-8" />
         <meta content="IE=edge" httpEquiv="X-UA-Compatible" />
-        <meta
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
-          name="viewport"
-        />
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
 
         {/*
           Disable body scrolling on web. This makes ScrollView components work closer to how they do on native.

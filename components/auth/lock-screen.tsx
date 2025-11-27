@@ -23,17 +23,10 @@ export function LockScreen({ onUnlock }: LockScreenProps) {
 
         <View className="items-center gap-2">
           <Text className="font-bold text-2xl">Numu Takeaway</Text>
-          <Text className="text-center text-muted-foreground">
-            Authenticate to access your wallet
-          </Text>
+          <Text className="text-center text-muted-foreground">Authenticate to access your wallet</Text>
         </View>
 
-        <Button
-          accessibilityLabel="Unlock with biometrics"
-          className="min-w-48"
-          onPress={handleUnlock}
-          size="lg"
-        >
+        <Button accessibilityLabel="Unlock with biometrics" className="min-w-48" onPress={handleUnlock} size="lg">
           <Text>Unlock</Text>
         </Button>
       </View>

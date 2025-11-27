@@ -2,10 +2,7 @@ import * as SwitchPrimitives from "@rn-primitives/switch";
 import { Platform } from "react-native";
 import { cn } from "@/lib/utils";
 
-function Switch({
-  className,
-  ...props
-}: SwitchPrimitives.RootProps & React.RefAttributes<SwitchPrimitives.RootRef>) {
+function Switch({ className, ...props }: SwitchPrimitives.RootProps & React.RefAttributes<SwitchPrimitives.RootRef>) {
   return (
     <SwitchPrimitives.Root
       className={cn(
@@ -25,9 +22,7 @@ function Switch({
           Platform.select({
             web: "pointer-events-none block ring-0",
           }),
-          props.checked
-            ? "translate-x-3.5 dark:bg-primary-foreground"
-            : "translate-x-0 dark:bg-foreground"
+          props.checked ? "translate-x-3.5 dark:bg-primary-foreground" : "translate-x-0 dark:bg-foreground"
         )}
       />
     </SwitchPrimitives.Root>

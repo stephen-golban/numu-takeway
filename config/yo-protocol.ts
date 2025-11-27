@@ -1,8 +1,7 @@
 // YO Protocol Configuration for Base Network
 // Documentation: https://docs.yo.xyz/integrations/technical-guides/yogateway-integration-guide
 
-export const YO_GATEWAY_ADDRESS =
-  "0xF1EeE0957267b1A474323Ff9CfF7719E964969FA" as const;
+export const YO_GATEWAY_ADDRESS = "0xF1EeE0957267b1A474323Ff9CfF7719E964969FA" as const;
 
 // Vault addresses on Base
 export const VAULTS = {
@@ -71,9 +70,7 @@ export const YO_GATEWAY_ABI = [
       { internalType: "uint32", name: "partnerId", type: "uint32" },
     ],
     name: "redeem",
-    outputs: [
-      { internalType: "uint256", name: "assetsOrRequestId", type: "uint256" },
-    ],
+    outputs: [{ internalType: "uint256", name: "assetsOrRequestId", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },

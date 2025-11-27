@@ -15,23 +15,13 @@ export default function VaultDetailScreen() {
   const { vaultKey } = useLocalSearchParams<{ vaultKey: string }>();
 
   // Validate vault key
-  const validVaultKey = (
-    vaultKey && vaultKey in VAULTS ? vaultKey : "yoUSD"
-  ) as VaultKey;
+  const validVaultKey = (vaultKey && vaultKey in VAULTS ? vaultKey : "yoUSD") as VaultKey;
   const vault = VAULTS[validVaultKey];
   const color = VAULT_COLORS[validVaultKey];
   const apy = VAULT_APY[validVaultKey];
   const price = ASSET_PRICES[vault.asset.symbol] || 0;
 
-  const {
-    shareBalance,
-    assetBalance,
-    isLoading,
-    error,
-    txHash,
-    deposit,
-    withdraw,
-  } = useVault(validVaultKey);
+  const { shareBalance, assetBalance, isLoading, error, txHash, deposit, withdraw } = useVault(validVaultKey);
 
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -66,27 +56,16 @@ export default function VaultDetailScreen() {
         options={{
           title: vault.name,
           headerLeft: () => (
-            <Button
-              accessibilityLabel="Go back"
-              onPress={() => router.back()}
-              size="icon"
-              variant="ghost"
-            >
+            <Button accessibilityLabel="Go back" onPress={() => router.back()} size="icon" variant="ghost">
               <Icon as={ArrowLeftIcon} className="text-foreground" size={20} />
             </Button>
           ),
         }}
       />
-      <ScrollView
-        className="flex-1 bg-background"
-        contentContainerClassName="p-4 gap-6"
-      >
+      <ScrollView className="flex-1 bg-background" contentContainerClassName="p-4 gap-6">
         {/* Vault Header */}
         <View className="items-center gap-4 py-4">
-          <View
-            className="size-20 items-center justify-center rounded-full"
-            style={{ backgroundColor: `${color}20` }}
-          >
+          <View className="size-20 items-center justify-center rounded-full" style={{ backgroundColor: `${color}20` }}>
             <Text className="font-bold text-3xl" style={{ color }}>
               {vault.symbol.charAt(0)}
             </Text>
@@ -94,9 +73,7 @@ export default function VaultDetailScreen() {
           <View className="items-center gap-1">
             <Text className="font-bold text-2xl">{vault.name}</Text>
             <View className="rounded-full bg-green-500/10 px-3 py-1">
-              <Text className="font-medium text-green-500 text-sm">
-                {apy.toFixed(1)}% APY
-              </Text>
+              <Text className="font-medium text-green-500 text-sm">{apy.toFixed(1)}% APY</Text>
             </View>
           </View>
         </View>
@@ -114,17 +91,11 @@ export default function VaultDetailScreen() {
             </View>
             <View className="flex-row items-center justify-between">
               <Text className="text-muted-foreground">USD Value</Text>
-              <Text className="font-mono font-semibold">
-                ${usdValue.toFixed(2)}
-              </Text>
+              <Text className="font-mono font-semibold">${usdValue.toFixed(2)}</Text>
             </View>
             <View className="flex-row items-center justify-between">
-              <Text className="text-muted-foreground">
-                {vault.asset.symbol} Available
-              </Text>
-              <Text className="font-mono font-semibold">
-                {Number.parseFloat(assetBalance).toFixed(4)}
-              </Text>
+              <Text className="text-muted-foreground">{vault.asset.symbol} Available</Text>
+              <Text className="font-mono font-semibold">{Number.parseFloat(assetBalance).toFixed(4)}</Text>
             </View>
           </View>
         </View>
@@ -157,9 +128,7 @@ export default function VaultDetailScreen() {
           {activeTab === "deposit" && (
             <View className="gap-4">
               <View className="gap-2">
-                <Text className="text-muted-foreground text-sm">
-                  Amount ({vault.asset.symbol})
-                </Text>
+                <Text className="text-muted-foreground text-sm">Amount ({vault.asset.symbol})</Text>
                 <Input
                   keyboardType="decimal-pad"
                   onChangeText={setDepositAmount}
@@ -186,9 +155,7 @@ export default function VaultDetailScreen() {
           {activeTab === "withdraw" && (
             <View className="gap-4">
               <View className="gap-2">
-                <Text className="text-muted-foreground text-sm">
-                  Amount ({vault.symbol})
-                </Text>
+                <Text className="text-muted-foreground text-sm">Amount ({vault.symbol})</Text>
                 <Input
                   keyboardType="decimal-pad"
                   onChangeText={setWithdrawAmount}
@@ -202,11 +169,7 @@ export default function VaultDetailScreen() {
                 disabled={isLoading || !withdrawAmount}
                 onPress={handleWithdraw}
               >
-                {isLoading ? (
-                  <ActivityIndicator color="white" size="small" />
-                ) : (
-                  <Text>Withdraw {vault.symbol}</Text>
-                )}
+                {isLoading ? <ActivityIndicator color="white" size="small" /> : <Text>Withdraw {vault.symbol}</Text>}
               </Button>
             </View>
           )}
@@ -215,18 +178,14 @@ export default function VaultDetailScreen() {
         {/* Error Display */}
         {error && (
           <View className="rounded-xl bg-destructive/10 p-4">
-            <Text className="text-center text-destructive text-sm">
-              {error}
-            </Text>
+            <Text className="text-center text-destructive text-sm">{error}</Text>
           </View>
         )}
 
         {/* Transaction Hash */}
         {txHash && (
           <View className="rounded-xl bg-green-500/10 p-4">
-            <Text className="text-center text-green-600 text-sm">
-              Transaction successful!
-            </Text>
+            <Text className="text-center text-green-600 text-sm">Transaction successful!</Text>
             <Text className="mt-1 text-center font-mono text-green-600/70 text-xs">
               {txHash.slice(0, 16)}...{txHash.slice(-12)}
             </Text>
@@ -240,10 +199,7 @@ export default function VaultDetailScreen() {
             <InfoRow label="Asset" value={vault.asset.name} />
             <InfoRow label="Symbol" value={vault.symbol} />
             <InfoRow label="Network" value="Base" />
-            <InfoRow
-              label="Contract"
-              value={`${vault.address.slice(0, 6)}...${vault.address.slice(-4)}`}
-            />
+            <InfoRow label="Contract" value={`${vault.address.slice(0, 6)}...${vault.address.slice(-4)}`} />
           </View>
         </View>
       </ScrollView>

@@ -11,17 +11,8 @@ type VaultCardProps = {
 };
 
 export function VaultCard({ vaultKey = "yoUSD" }: VaultCardProps) {
-  const {
-    vault,
-    shareBalance,
-    assetBalance,
-    isLoading,
-    error,
-    txHash,
-    deposit,
-    withdraw,
-    refetch,
-  } = useVault(vaultKey);
+  const { vault, shareBalance, assetBalance, isLoading, error, txHash, deposit, withdraw, refetch } =
+    useVault(vaultKey);
 
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -51,13 +42,7 @@ export function VaultCard({ vaultKey = "yoUSD" }: VaultCardProps) {
     <View className="w-full gap-4 rounded-xl bg-card p-4">
       <View className="flex-row items-center justify-between">
         <Text className="font-semibold text-lg">{vault.name} Vault</Text>
-        <Button
-          accessibilityLabel="Refresh balances"
-          disabled={isLoading}
-          onPress={refetch}
-          size="sm"
-          variant="ghost"
-        >
+        <Button accessibilityLabel="Refresh balances" disabled={isLoading} onPress={refetch} size="sm" variant="ghost">
           <Text>{isLoading ? "..." : "↻"}</Text>
         </Button>
       </View>
@@ -65,20 +50,12 @@ export function VaultCard({ vaultKey = "yoUSD" }: VaultCardProps) {
       {/* Balances */}
       <View className="gap-2 rounded-lg bg-muted/50 p-3">
         <View className="flex-row justify-between">
-          <Text className="text-muted-foreground text-sm">
-            {vault.asset.symbol} Balance
-          </Text>
-          <Text className="font-mono text-sm">
-            {Number.parseFloat(assetBalance).toFixed(4)}
-          </Text>
+          <Text className="text-muted-foreground text-sm">{vault.asset.symbol} Balance</Text>
+          <Text className="font-mono text-sm">{Number.parseFloat(assetBalance).toFixed(4)}</Text>
         </View>
         <View className="flex-row justify-between">
-          <Text className="text-muted-foreground text-sm">
-            {vault.symbol} Balance
-          </Text>
-          <Text className="font-mono text-sm">
-            {Number.parseFloat(shareBalance).toFixed(4)}
-          </Text>
+          <Text className="text-muted-foreground text-sm">{vault.symbol} Balance</Text>
+          <Text className="font-mono text-sm">{Number.parseFloat(shareBalance).toFixed(4)}</Text>
         </View>
       </View>
 
@@ -114,11 +91,7 @@ export function VaultCard({ vaultKey = "yoUSD" }: VaultCardProps) {
             disabled={isLoading || !depositAmount}
             onPress={handleDeposit}
           >
-            {isLoading ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <Text>Deposit {vault.asset.symbol}</Text>
-            )}
+            {isLoading ? <ActivityIndicator color="white" size="small" /> : <Text>Deposit {vault.asset.symbol}</Text>}
           </Button>
         </View>
       )}
@@ -137,19 +110,13 @@ export function VaultCard({ vaultKey = "yoUSD" }: VaultCardProps) {
             disabled={isLoading || !withdrawAmount}
             onPress={handleWithdraw}
           >
-            {isLoading ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <Text>Withdraw {vault.symbol}</Text>
-            )}
+            {isLoading ? <ActivityIndicator color="white" size="small" /> : <Text>Withdraw {vault.symbol}</Text>}
           </Button>
         </View>
       )}
 
       {/* Error Display */}
-      {error && (
-        <Text className="text-center text-destructive text-sm">{error}</Text>
-      )}
+      {error && <Text className="text-center text-destructive text-sm">{error}</Text>}
 
       {/* Transaction Hash */}
       {txHash && (

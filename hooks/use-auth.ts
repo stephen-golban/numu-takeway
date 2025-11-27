@@ -21,13 +21,12 @@ export function useAuth() {
 
   useEffect(() => {
     async function initialize() {
-      const [hasHardware, isEnrolled, authTypes, storedEnabled] =
-        await Promise.all([
-          LocalAuthentication.hasHardwareAsync(),
-          LocalAuthentication.isEnrolledAsync(),
-          LocalAuthentication.supportedAuthenticationTypesAsync(),
-          SecureStore.getItemAsync(AUTH_ENABLED_KEY),
-        ]);
+      const [hasHardware, isEnrolled, authTypes, storedEnabled] = await Promise.all([
+        LocalAuthentication.hasHardwareAsync(),
+        LocalAuthentication.isEnrolledAsync(),
+        LocalAuthentication.supportedAuthenticationTypesAsync(),
+        SecureStore.getItemAsync(AUTH_ENABLED_KEY),
+      ]);
 
       const isSupported = hasHardware && isEnrolled;
       const isAuthEnabled = storedEnabled === "true";
@@ -65,10 +64,7 @@ export function useAuth() {
   }, [state.isSupported, state.isAuthEnabled]);
 
   const setAuthEnabled = useCallback(async (enabled: boolean) => {
-    await SecureStore.setItemAsync(
-      AUTH_ENABLED_KEY,
-      enabled ? "true" : "false"
-    );
+    await SecureStore.setItemAsync(AUTH_ENABLED_KEY, enabled ? "true" : "false");
     setState((prev) => ({
       ...prev,
       isAuthEnabled: enabled,

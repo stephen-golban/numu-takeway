@@ -16,13 +16,7 @@ import {
 import { useColorScheme } from "nativewind";
 import { Pressable, ScrollView, View } from "react-native";
 import { SettingsRow } from "@/components/settings/settings-row";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
@@ -69,38 +63,24 @@ export default function SettingsScreen() {
   return (
     <>
       <Stack.Screen options={SCREEN_OPTIONS} />
-      <ScrollView
-        className="flex-1 bg-background"
-        contentContainerClassName="gap-6 p-4 pb-12"
-      >
+      <ScrollView className="flex-1 bg-background" contentContainerClassName="gap-6 p-4 pb-12">
         {/* Account Section */}
         {isConnected && address && (
           <Card>
             <CardHeader>
               <View className="flex-row items-center gap-2">
-                <Icon
-                  as={WalletIcon}
-                  className="text-muted-foreground"
-                  size={18}
-                />
+                <Icon as={WalletIcon} className="text-muted-foreground" size={18} />
                 <CardTitle>Account</CardTitle>
               </View>
               <CardDescription>Connected wallet information</CardDescription>
             </CardHeader>
             <CardContent className="gap-3">
               <View className="rounded-lg bg-muted/50 p-3">
-                <Text className="text-muted-foreground text-xs">
-                  Wallet Address
-                </Text>
+                <Text className="text-muted-foreground text-xs">Wallet Address</Text>
                 <Text className="font-mono text-sm">{address}</Text>
               </View>
               <Separator />
-              <SettingsRow
-                destructive
-                icon={LogOutIcon}
-                onPress={handleDisconnect}
-                title="Disconnect Wallet"
-              />
+              <SettingsRow destructive icon={LogOutIcon} onPress={handleDisconnect} title="Disconnect Wallet" />
             </CardContent>
           </Card>
         )}
@@ -109,11 +89,7 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Icon
-                as={PaletteIcon}
-                className="text-muted-foreground"
-                size={18}
-              />
+              <Icon as={PaletteIcon} className="text-muted-foreground" size={18} />
               <CardTitle>Appearance</CardTitle>
             </View>
             <CardDescription>Customize how the app looks</CardDescription>
@@ -137,29 +113,17 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Icon
-                as={ShieldIcon}
-                className="text-muted-foreground"
-                size={18}
-              />
+              <Icon as={ShieldIcon} className="text-muted-foreground" size={18} />
               <CardTitle>Security</CardTitle>
             </View>
             <CardDescription>Protect your app with biometrics</CardDescription>
           </CardHeader>
           <CardContent>
             <SettingsRow
-              description={
-                isSupported
-                  ? "Require authentication when opening the app"
-                  : "Not available on this device"
-              }
+              description={isSupported ? "Require authentication when opening the app" : "Not available on this device"}
               icon={FingerprintIcon}
               rightElement={
-                <BiometricToggle
-                  disabled={!isSupported}
-                  enabled={isAuthEnabled}
-                  onToggle={setAuthEnabled}
-                />
+                <BiometricToggle disabled={!isSupported} enabled={isAuthEnabled} onToggle={setAuthEnabled} />
               }
               title="Biometric Lock"
             />
@@ -182,16 +146,12 @@ export default function SettingsScreen() {
             <Separator />
             <View className="flex-row items-center justify-between py-2">
               <Text className="text-muted-foreground text-sm">Version</Text>
-              <Text className="text-sm">
-                {Application.nativeApplicationVersion ?? "1.0.0"}
-              </Text>
+              <Text className="text-sm">{Application.nativeApplicationVersion ?? "1.0.0"}</Text>
             </View>
             <Separator />
             <View className="flex-row items-center justify-between py-2">
               <Text className="text-muted-foreground text-sm">Build</Text>
-              <Text className="text-sm">
-                {Application.nativeBuildVersion ?? "1"}
-              </Text>
+              <Text className="text-sm">{Application.nativeBuildVersion ?? "1"}</Text>
             </View>
           </CardContent>
         </Card>
@@ -207,12 +167,7 @@ type ThemeOptionButtonProps = {
   onPress: () => void;
 };
 
-function ThemeOptionButton({
-  icon,
-  isSelected,
-  label,
-  onPress,
-}: ThemeOptionButtonProps) {
+function ThemeOptionButton({ icon, isSelected, label, onPress }: ThemeOptionButtonProps) {
   return (
     <Pressable
       accessibilityLabel={`${label} theme`}
@@ -225,16 +180,8 @@ function ThemeOptionButton({
       onPress={onPress}
     >
       <View className="flex-row items-center gap-3">
-        <Icon
-          as={icon}
-          className={isSelected ? "text-primary" : "text-muted-foreground"}
-          size={20}
-        />
-        <Text
-          className={cn("text-sm", isSelected && "font-medium text-primary")}
-        >
-          {label}
-        </Text>
+        <Icon as={icon} className={isSelected ? "text-primary" : "text-muted-foreground"} size={20} />
+        <Text className={cn("text-sm", isSelected && "font-medium text-primary")}>{label}</Text>
       </View>
       {isSelected && <Icon as={CheckIcon} className="text-primary" size={18} />}
     </Pressable>
@@ -247,11 +194,7 @@ type BiometricToggleProps = {
   onToggle: (enabled: boolean) => void;
 };
 
-function BiometricToggle({
-  disabled,
-  enabled,
-  onToggle,
-}: BiometricToggleProps) {
+function BiometricToggle({ disabled, enabled, onToggle }: BiometricToggleProps) {
   return (
     <Pressable
       accessibilityLabel="Toggle biometric authentication"
@@ -265,12 +208,7 @@ function BiometricToggle({
       disabled={disabled}
       onPress={() => onToggle(!enabled)}
     >
-      <View
-        className={cn(
-          "h-5 w-5 rounded-full bg-background shadow-sm",
-          enabled ? "self-end" : "self-start"
-        )}
-      />
+      <View className={cn("h-5 w-5 rounded-full bg-background shadow-sm", enabled ? "self-end" : "self-start")} />
     </Pressable>
   );
 }

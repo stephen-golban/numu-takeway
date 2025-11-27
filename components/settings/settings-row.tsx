@@ -26,32 +26,13 @@ export function SettingsRow({
 }: SettingsRowProps) {
   const content = (
     <View className="flex-row items-center gap-3 py-3">
-      {icon && (
-        <Icon
-          as={icon}
-          className={cn(
-            "text-muted-foreground",
-            destructive && "text-destructive"
-          )}
-          size={20}
-        />
-      )}
+      {icon && <Icon as={icon} className={cn("text-muted-foreground", destructive && "text-destructive")} size={20} />}
       <View className="flex-1">
-        <Text className={cn("text-sm", destructive && "text-destructive")}>
-          {title}
-        </Text>
-        {description && (
-          <Text className="text-muted-foreground text-xs">{description}</Text>
-        )}
+        <Text className={cn("text-sm", destructive && "text-destructive")}>{title}</Text>
+        {description && <Text className="text-muted-foreground text-xs">{description}</Text>}
       </View>
       {rightElement}
-      {showChevron && (
-        <Icon
-          as={ChevronRightIcon}
-          className="text-muted-foreground"
-          size={18}
-        />
-      )}
+      {showChevron && <Icon as={ChevronRightIcon} className="text-muted-foreground" size={18} />}
     </View>
   );
 

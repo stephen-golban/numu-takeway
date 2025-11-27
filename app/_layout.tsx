@@ -39,9 +39,7 @@ export default function RootLayout() {
               }}
             />
             <PortalHost />
-            <View
-              style={{ position: "absolute", height: "100%", width: "100%" }}
-            >
+            <View style={{ position: "absolute", height: "100%", width: "100%" }}>
               <AppKit />
             </View>
           </>

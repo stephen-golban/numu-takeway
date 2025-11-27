@@ -15,8 +15,7 @@ export const appKitStorage: Storage = {
     const keys = mmkv.getAllKeys();
     return await Promise.resolve(keys.map(parseEntry));
   },
-  setItem: async <T = unknown>(key: string, value: T) =>
-    await Promise.resolve(mmkv.set(key, safeJsonStringify(value))),
+  setItem: async <T = unknown>(key: string, value: T) => await Promise.resolve(mmkv.set(key, safeJsonStringify(value))),
   getItem: async <T = unknown>(key: string): Promise<T | undefined> => {
     const item = mmkv.getString(key);
     if (typeof item === "undefined" || item === null) {

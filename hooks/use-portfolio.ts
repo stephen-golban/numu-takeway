@@ -89,16 +89,10 @@ export function usePortfolio() {
       const vaultKeys = Object.keys(VAULTS) as VaultKey[];
       const balancePromises = vaultKeys.map(async (vaultKey) => {
         const vault = VAULTS[vaultKey];
-        const vaultContract = new Contract(
-          vault.address,
-          ERC20_ABI,
-          ethersProvider
-        );
+        const vaultContract = new Contract(vault.address, ERC20_ABI, ethersProvider);
 
         const shareBalanceRaw = await vaultContract.balanceOf(address);
-        const shareBalance = Number.parseFloat(
-          formatUnits(shareBalanceRaw, vault.decimals)
-        );
+        const shareBalance = Number.parseFloat(formatUnits(shareBalanceRaw, vault.decimals));
 
         // For simplicity, we're using share balance as asset balance
         // In production, you'd convert shares to assets using the vault's exchange rate
@@ -138,8 +132,7 @@ export function usePortfolio() {
       setState((prev) => ({
         ...prev,
         isLoading: false,
-        error:
-          error instanceof Error ? error.message : "Failed to fetch portfolio",
+        error: error instanceof Error ? error.message : "Failed to fetch portfolio",
       }));
     }
   }, [isConnected, address, provider, getEthersProvider]);
