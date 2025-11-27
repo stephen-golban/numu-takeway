@@ -1,50 +1,51 @@
 import "@/config/appkit";
 import "@/global.css";
-
-import { ThemeProvider } from "@react-navigation/native";
-import { AppKit, AppKitProvider } from "@reown/appkit-react-native";
-import { PortalHost } from "@rn-primitives/portal";
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { SplashScreen, Stack } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { View } from "react-native";
-import { LockScreen } from "@/components/auth/lock-screen";
-import { appKit } from "@/config/appkit";
-import { useAuth } from "@/hooks/use-auth";
-import { NAV_THEME, THEME } from "@/lib/theme";
+import { useLockOnBackground } from "@/hooks/use-lock-on-background";
+import { THEME } from "@/lib/theme";
+import AppProviders from "@/providers";
+import { useAuth } from "@/providers/auth-provider";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+SplashScreen.preventAutoHideAsync();
+
+export { ErrorBoundary } from "expo-router";
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
-  const { isLocked, authenticate } = useAuth();
   const theme = colorScheme ?? "light";
-  const backgroundColor = THEME[theme].background;
 
   return (
-    <AppKitProvider instance={appKit}>
-      <ThemeProvider value={NAV_THEME[theme]}>
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        {isLocked ? (
-          <LockScreen onUnlock={authenticate} />
-        ) : (
-          <>
-            <Stack
-              screenOptions={{
-                headerShadowVisible: false,
-                contentStyle: { backgroundColor },
-              }}
-            />
-            <PortalHost />
-            <View style={{ position: "absolute", height: "100%", width: "100%" }}>
-              <AppKit />
-            </View>
-          </>
-        )}
-      </ThemeProvider>
-    </AppKitProvider>
+    <AppProviders theme={theme}>
+      <RootNavigator theme={theme} />
+    </AppProviders>
+  );
+}
+
+function RootNavigator({ theme }: { theme: "light" | "dark" }) {
+  const { isLocked, isLoading, lock } = useAuth();
+  const backgroundColor = THEME[theme].background;
+
+  useLockOnBackground(lock);
+
+  if (!isLoading) {
+    SplashScreen.hide();
+  }
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        headerShadowVisible: false,
+        contentStyle: { backgroundColor },
+      }}
+    >
+      <Stack.Protected guard={isLocked}>
+        <Stack.Screen name="lock" />
+      </Stack.Protected>
+      <Stack.Protected guard={!isLocked}>
+        <Stack.Screen name="(protected)" />
+      </Stack.Protected>
+    </Stack>
   );
 }

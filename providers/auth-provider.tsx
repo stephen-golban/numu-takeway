@@ -1,42 +1,66 @@
+import * as Device from "expo-device";
 import * as LocalAuthentication from "expo-local-authentication";
-import * as SecureStore from "expo-secure-store";
-import { useCallback, useEffect, useState } from "react";
+import { createContext, type PropsWithChildren, use, useCallback, useEffect, useState } from "react";
+import { createMMKV } from "react-native-mmkv";
 
+const storage = createMMKV({ id: "auth" });
 const AUTH_ENABLED_KEY = "authEnabled";
+const IS_SIMULATOR = !Device.isDevice;
 
 type AuthState = {
   isLocked: boolean;
   isAuthEnabled: boolean;
   isSupported: boolean;
+  isLoading: boolean;
+  lockCount: number;
   authenticationType: LocalAuthentication.AuthenticationType[];
 };
 
+type AuthContextValue = AuthState & {
+  authenticate: () => Promise<boolean>;
+  setAuthEnabled: (enabled: boolean) => void;
+  lock: () => void;
+};
+
+const AuthContext = createContext<AuthContextValue | null>(null);
+
 export function useAuth() {
+  const context = use(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+export function AuthProvider({ children }: PropsWithChildren) {
   const [state, setState] = useState<AuthState>({
     isLocked: true,
     isAuthEnabled: false,
     isSupported: false,
+    isLoading: true,
+    lockCount: 0,
     authenticationType: [],
   });
 
   useEffect(() => {
     async function initialize() {
-      const [hasHardware, isEnrolled, authTypes, storedEnabled] = await Promise.all([
+      const [hasHardware, isEnrolled, authTypes] = await Promise.all([
         LocalAuthentication.hasHardwareAsync(),
         LocalAuthentication.isEnrolledAsync(),
         LocalAuthentication.supportedAuthenticationTypesAsync(),
-        SecureStore.getItemAsync(AUTH_ENABLED_KEY),
       ]);
 
-      const isSupported = hasHardware && isEnrolled;
-      const isAuthEnabled = storedEnabled === "true";
+      const isSupported = hasHardware && isEnrolled && !IS_SIMULATOR;
+      const isAuthEnabled = storage.getBoolean(AUTH_ENABLED_KEY) ?? false;
 
-      setState({
+      setState((prev) => ({
+        ...prev,
         isSupported,
         authenticationType: authTypes,
         isAuthEnabled,
-        isLocked: isAuthEnabled && isSupported,
-      });
+        isLocked: !IS_SIMULATOR && isAuthEnabled && isSupported,
+        isLoading: false,
+      }));
     }
 
     initialize();
@@ -63,8 +87,8 @@ export function useAuth() {
     return false;
   }, [state.isSupported, state.isAuthEnabled]);
 
-  const setAuthEnabled = useCallback(async (enabled: boolean) => {
-    await SecureStore.setItemAsync(AUTH_ENABLED_KEY, enabled ? "true" : "false");
+  const setAuthEnabled = useCallback((enabled: boolean) => {
+    storage.set(AUTH_ENABLED_KEY, enabled);
     setState((prev) => ({
       ...prev,
       isAuthEnabled: enabled,
@@ -74,14 +98,9 @@ export function useAuth() {
 
   const lock = useCallback(() => {
     if (state.isAuthEnabled && state.isSupported) {
-      setState((prev) => ({ ...prev, isLocked: true }));
+      setState((prev) => ({ ...prev, isLocked: true, lockCount: prev.lockCount + 1 }));
     }
   }, [state.isAuthEnabled, state.isSupported]);
 
-  return {
-    ...state,
-    authenticate,
-    setAuthEnabled,
-    lock,
-  };
+  return <AuthContext value={{ ...state, authenticate, setAuthEnabled, lock }}>{children}</AuthContext>;
 }

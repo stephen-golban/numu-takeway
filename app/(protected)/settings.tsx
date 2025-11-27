@@ -20,8 +20,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Icon } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
-import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/auth-provider";
 
 const SCREEN_OPTIONS = {
   title: "Settings",
