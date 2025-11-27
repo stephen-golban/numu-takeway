@@ -4,6 +4,9 @@
     "ignoreUnknown": false,
     "includes": ["**", "!**/dist", "!**/.expo"]
   },
+  "formatter": {
+    "lineWidth": 120
+  },
   "linter": {
     "rules": {
       "performance": {
