@@ -2,10 +2,11 @@ import { useAccount } from "@reown/appkit-react-native";
 import { Stack } from "expo-router";
 import { MoonStarIcon, SunIcon } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { VaultCard } from "@/components/vault/vault-card";
 import { WalletButton } from "@/components/wallet/wallet-button";
 
 const SCREEN_OPTIONS = {
@@ -20,38 +21,43 @@ export default function Screen() {
   return (
     <>
       <Stack.Screen options={SCREEN_OPTIONS} />
-      <View className="flex-1 items-center justify-center gap-8 p-4">
-        <View className="items-center gap-4">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="items-center gap-6 p-4 pt-24"
+      >
+        <View className="items-center gap-2">
           <Text className="font-bold text-3xl">Numu Takeaway</Text>
           <Text className="text-center text-muted-foreground">
             YO Protocol Vault Integration
           </Text>
         </View>
 
-        <View className="w-full max-w-sm gap-4 rounded-xl bg-card p-6">
-          <Text className="text-center font-semibold text-lg">
-            {isConnected ? "Wallet Connected" : "Connect Your Wallet"}
-          </Text>
-
-          {isConnected && address ? (
-            <View className="items-center gap-2">
-              <Text className="text-muted-foreground text-sm">
-                Connected Address
-              </Text>
-              <Text className="font-mono text-sm">{address}</Text>
-            </View>
-          ) : (
-            <Text className="text-center text-muted-foreground text-sm">
-              Connect your wallet to interact with YO Protocol vaults on Base
-              network.
+        <View className="w-full max-w-sm gap-4 rounded-xl bg-card p-4">
+          <View className="flex-row items-center justify-between">
+            <Text className="font-semibold text-lg">
+              {isConnected ? "Wallet Connected" : "Connect Wallet"}
             </Text>
-          )}
-
-          <View className="items-center pt-2">
             <WalletButton />
           </View>
+
+          {isConnected && address && (
+            <View className="rounded-lg bg-muted/50 p-2">
+              <Text className="text-center font-mono text-muted-foreground text-xs">
+                {address}
+              </Text>
+            </View>
+          )}
         </View>
-      </View>
+
+        {isConnected && <VaultCard vaultKey="yoUSD" />}
+
+        {!isConnected && (
+          <Text className="text-center text-muted-foreground text-sm">
+            Connect your wallet to interact with YO Protocol vaults on Base
+            network.
+          </Text>
+        )}
+      </ScrollView>
     </>
   );
 }
