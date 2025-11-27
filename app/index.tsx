@@ -1,13 +1,15 @@
 import { useAccount } from "@reown/appkit-react-native";
 import { Stack } from "expo-router";
-import { MoonStarIcon, SunIcon } from "lucide-react-native";
+import { FingerprintIcon, MoonStarIcon, SunIcon } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { ScrollView, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import { VaultCard } from "@/components/vault/vault-card";
 import { WalletButton } from "@/components/wallet/wallet-button";
+import { useAuth } from "@/hooks/use-auth";
 
 const SCREEN_OPTIONS = {
   title: "Numu Takeaway",
@@ -17,6 +19,7 @@ const SCREEN_OPTIONS = {
 
 export default function Screen() {
   const { address, isConnected } = useAccount();
+  const { isAuthEnabled, isSupported, setAuthEnabled } = useAuth();
 
   return (
     <>
@@ -57,6 +60,34 @@ export default function Screen() {
             network.
           </Text>
         )}
+
+        {/* Settings Section */}
+        <View className="w-full max-w-sm gap-4 rounded-xl bg-card p-4">
+          <Text className="font-semibold text-lg">Settings</Text>
+
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 flex-row items-center gap-3">
+              <Icon
+                as={FingerprintIcon}
+                className="text-muted-foreground"
+                size={20}
+              />
+              <View className="flex-1">
+                <Text className="text-sm">Biometric Lock</Text>
+                <Text className="text-muted-foreground text-xs">
+                  {isSupported
+                    ? "Require authentication on app open"
+                    : "Not available on this device"}
+                </Text>
+              </View>
+            </View>
+            <Switch
+              checked={isAuthEnabled}
+              disabled={!isSupported}
+              onCheckedChange={setAuthEnabled}
+            />
+          </View>
+        </View>
       </ScrollView>
     </>
   );
