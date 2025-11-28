@@ -1,5 +1,6 @@
 import "@/config/appkit";
 import "@/global.css";
+import { useAccount } from "@reown/appkit-react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { THEME } from "@/lib/theme";
@@ -23,6 +24,7 @@ export default function RootLayout() {
 
 function RootNavigator({ theme }: { theme: "light" | "dark" }) {
   const { isLocked, isLoading } = useAuth();
+  const { isConnected } = useAccount();
   const backgroundColor = THEME[theme].background;
 
   if (!isLoading) {
@@ -32,16 +34,18 @@ function RootNavigator({ theme }: { theme: "light" | "dark" }) {
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
         headerShadowVisible: false,
         contentStyle: { backgroundColor },
       }}
     >
       <Stack.Protected guard={isLocked}>
-        <Stack.Screen name="lock" />
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
       </Stack.Protected>
-      <Stack.Protected guard={!isLocked}>
-        <Stack.Screen name="(protected)" />
+      <Stack.Protected guard={!(isLocked || isConnected)}>
+        <Stack.Screen name="welcome" />
+      </Stack.Protected>
+      <Stack.Protected guard={!isLocked && isConnected}>
+        <Stack.Screen name="(protected)" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
   );
