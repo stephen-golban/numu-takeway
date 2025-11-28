@@ -4,21 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { ERC20_ABI, VAULTS, type VaultKey } from "@/config/yo-protocol";
 import { fetchTokenPrices, fetchVaultAPYs } from "@/lib/api";
 import { VAULT_COLORS } from "@/lib/defaults";
-
-type VaultBalance = {
-  vaultKey: VaultKey;
-  symbol: string;
-  name: string;
-  assetSymbol: string;
-  shareBalance: number;
-  assetBalance: number;
-  usdValue: number;
-  apy: number;
-  color: string;
-};
+import type { VaultPosition } from "@/typings";
 
 type PortfolioState = {
-  vaults: VaultBalance[];
+  vaults: VaultPosition[];
   totalValue: number;
   change24h: number;
   changePercent: number;

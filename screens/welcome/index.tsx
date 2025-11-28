@@ -1,9 +1,8 @@
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WalletButton } from "@/components/wallet-button";
-import FeatureRow from "./feature-row";
-import HeroSection from "./hero-section";
-import { FEATURES } from "./mock";
+import { FeatureRow, HeroSection } from "./components";
+import { FEATURES } from "./data";
 
 const WelcomeScreen = () => (
   <SafeAreaView className="flex-1 bg-background" edges={["bottom", "top"]}>

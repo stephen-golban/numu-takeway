@@ -4,11 +4,11 @@ import { AssetCard } from "@/components/asset-card";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
-import type { VaultAsset } from "@/typings/vault";
-import { formatVaultCount } from "./util";
+import type { VaultPosition } from "@/typings";
+import { formatVaultCount } from "../util";
 
 type AssetsSectionProps = {
-  vaults: VaultAsset[];
+  vaults: VaultPosition[];
   onVaultPress: (vaultKey: string) => void;
   isLoading?: boolean;
 };
@@ -34,7 +34,7 @@ function AssetsSectionContent({
   onVaultPress,
   isLoading,
 }: {
-  vaults: VaultAsset[];
+  vaults: VaultPosition[];
   onVaultPress: (vaultKey: string) => void;
   isLoading: boolean;
 }) {

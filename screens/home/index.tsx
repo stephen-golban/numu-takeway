@@ -2,11 +2,8 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
-import { ActivitySection } from "./activity-section";
-import { AssetsSection } from "./assets-section";
+import { ActivitySection, AssetsSection, PortfolioHeader, QuickActions } from "./components";
 import useHomeScreen from "./hook";
-import { PortfolioHeader } from "./portfolio-header";
-import { QuickActions } from "./quick-actions";
 
 const HomeScreen = () => {
   const { vaults, totalValue, change24h, changePercent, isLoading, refreshing, activities, ...handlers } =
