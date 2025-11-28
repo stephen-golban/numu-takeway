@@ -2,20 +2,7 @@ import { useAccount, useProvider } from "@reown/appkit-react-native";
 import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import { ERC20_ABI, VAULTS, type VaultKey } from "@/config/yo-protocol";
-
-// Mock APY data - in production this would come from an API
-const VAULT_APY: Record<VaultKey, number> = {
-  yoUSD: 5.2,
-  yoETH: 3.8,
-  yoBTC: 4.2,
-};
-
-// Mock prices - in production this would come from a price oracle
-const ASSET_PRICES: Record<string, number> = {
-  USDC: 1.0,
-  WETH: 3500.0,
-  cbBTC: 97_500.0,
-};
+import { fetchTokenPrices, fetchVaultAPYs } from "@/lib/api";
 
 // Vault display colors
 const VAULT_COLORS: Record<VaultKey, string> = {
@@ -86,6 +73,9 @@ export function usePortfolio() {
         throw new Error("No provider available");
       }
 
+      // Fetch real-time prices and APYs in parallel
+      const [prices, apys] = await Promise.all([fetchTokenPrices(), fetchVaultAPYs()]);
+
       const vaultKeys = Object.keys(VAULTS) as VaultKey[];
       const balancePromises = vaultKeys.map(async (vaultKey) => {
         const vault = VAULTS[vaultKey];
@@ -97,8 +87,8 @@ export function usePortfolio() {
         // For simplicity, we're using share balance as asset balance
         // In production, you'd convert shares to assets using the vault's exchange rate
         const assetBalance = shareBalance;
-        const price = ASSET_PRICES[vault.asset.symbol] || 0;
-        const usdValue = assetBalance * price;
+        const priceData = prices[vault.asset.symbol] || { price: 0, change24h: 0 };
+        const usdValue = assetBalance * priceData.price;
 
         return {
           vaultKey,
@@ -108,23 +98,25 @@ export function usePortfolio() {
           shareBalance,
           assetBalance,
           usdValue,
-          apy: VAULT_APY[vaultKey],
+          apy: apys[vaultKey] ?? 0,
           color: VAULT_COLORS[vaultKey],
+          priceChange24h: priceData.change24h,
         };
       });
 
       const vaults = await Promise.all(balancePromises);
       const totalValue = vaults.reduce((sum, v) => sum + v.usdValue, 0);
 
-      // Mock 24h change - in production this would be calculated from historical data
-      const change24h = totalValue * 0.0192; // Mock +1.92% change
-      const changePercent = 1.92;
+      // Calculate weighted average 24h change based on portfolio composition
+      const weightedChange =
+        totalValue > 0 ? vaults.reduce((sum, v) => sum + (v.usdValue / totalValue) * v.priceChange24h, 0) : 0;
+      const change24h = (totalValue * weightedChange) / 100;
 
       setState({
         vaults,
         totalValue,
         change24h,
-        changePercent,
+        changePercent: weightedChange,
         isLoading: false,
         error: null,
       });
@@ -147,4 +139,4 @@ export function usePortfolio() {
   };
 }
 
-export { VAULT_APY, ASSET_PRICES, VAULT_COLORS };
+export { VAULT_COLORS };

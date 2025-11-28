@@ -1,23 +1,36 @@
+import { useAccount } from "@reown/appkit-react-native";
 import { router } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ActivityItem } from "@/components/activity-section";
 import { usePortfolio } from "@/hooks/use-portfolio";
+import { fetchTransactionHistory } from "@/lib/api";
 import { DEFAULT_VAULT_KEY } from "./util";
 
-// Activities would come from an indexer or transaction history API
-// For now, we show empty state since there's no real-time tx history from Reown
-const EMPTY_ACTIVITIES: ActivityItem[] = [];
-
 export default function useHomeScreen() {
+  const { address, isConnected } = useAccount();
   const { vaults, totalValue, change24h, changePercent, isLoading, refetch } = usePortfolio();
 
   const [refreshing, setRefreshing] = useState(false);
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+
+  const loadActivities = useCallback(async () => {
+    if (!(isConnected && address)) {
+      setActivities([]);
+      return;
+    }
+    const txHistory = await fetchTransactionHistory(address);
+    setActivities(txHistory);
+  }, [isConnected, address]);
+
+  useEffect(() => {
+    loadActivities();
+  }, [loadActivities]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await refetch();
+    await Promise.all([refetch(), loadActivities()]);
     setRefreshing(false);
-  }, [refetch]);
+  }, [refetch, loadActivities]);
 
   function handleVaultPress(vaultKey: string = DEFAULT_VAULT_KEY) {
     router.push(`/vault/${vaultKey}`);
@@ -30,7 +43,7 @@ export default function useHomeScreen() {
     changePercent,
     isLoading,
     refreshing,
-    activities: EMPTY_ACTIVITIES,
+    activities,
     handleRefresh,
     handleVaultPress,
   };

@@ -28,11 +28,11 @@ const HomeScreen = () => {
           totalValue={totalValue}
         />
         <QuickActions onDeposit={handlers.handleVaultPress} onWithdraw={handlers.handleVaultPress} />
-        <AssetsSection onVaultPress={handlers.handleVaultPress} vaults={vaults} />
+        <AssetsSection isLoading={isLoading} onVaultPress={handlers.handleVaultPress} vaults={vaults} />
         <View className="gap-3 px-4">
           <Text className="font-semibold text-lg">Recent Activity</Text>
           <View className="rounded-2xl bg-card p-4">
-            <ActivitySection activities={activities} />
+            <ActivitySection activities={activities} isLoading={isLoading} />
           </View>
         </View>
       </ScrollView>

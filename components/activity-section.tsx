@@ -1,6 +1,7 @@
 import { ArrowDownToLineIcon, ArrowUpFromLineIcon, ClockIcon } from "lucide-react-native";
 import { View } from "react-native";
 import { Icon } from "@/components/ui/icon";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { formatRelativeTime } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ type ActivityItem = {
 
 type ActivitySectionProps = {
   activities: ActivityItem[];
+  isLoading?: boolean;
 };
 
 const ActivityRow: React.FC<{ activity: ActivityItem }> = ({ activity }) => {
@@ -41,7 +43,29 @@ const ActivityRow: React.FC<{ activity: ActivityItem }> = ({ activity }) => {
   );
 };
 
-const ActivitySection: React.FC<ActivitySectionProps> = ({ activities }) => {
+function ActivityRowSkeleton() {
+  return (
+    <View className="flex-row items-center gap-3 py-3">
+      <Skeleton className="size-10 rounded-full bg-muted" />
+      <View className="flex-1 gap-2">
+        <Skeleton className="h-4 w-32 bg-muted" />
+        <Skeleton className="h-3 w-20 bg-muted" />
+      </View>
+    </View>
+  );
+}
+
+const ActivitySection: React.FC<ActivitySectionProps> = ({ activities, isLoading = false }) => {
+  if (isLoading) {
+    return (
+      <View className="gap-1">
+        <ActivityRowSkeleton />
+        <ActivityRowSkeleton />
+        <ActivityRowSkeleton />
+      </View>
+    );
+  }
+
   if (activities.length === 0) {
     return (
       <View className="items-center gap-3 py-8">
