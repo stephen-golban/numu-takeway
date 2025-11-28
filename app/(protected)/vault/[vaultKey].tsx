@@ -1,9 +1,8 @@
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ArrowLeftIcon } from "lucide-react-native";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { VAULTS, type VaultKey } from "@/config/yo-protocol";
@@ -11,7 +10,6 @@ import { ASSET_PRICES, VAULT_APY, VAULT_COLORS } from "@/hooks/use-portfolio";
 import { useVault } from "@/hooks/use-vault";
 
 export default function VaultDetailScreen() {
-  const router = useRouter();
   const { vaultKey } = useLocalSearchParams<{ vaultKey: string }>();
 
   // Validate vault key
@@ -51,18 +49,9 @@ export default function VaultDetailScreen() {
   }
 
   return (
-    <>
-      <Stack.Screen
-        options={{
-          title: vault.name,
-          headerLeft: () => (
-            <Button accessibilityLabel="Go back" onPress={() => router.back()} size="icon" variant="ghost">
-              <Icon as={ArrowLeftIcon} className="text-foreground" size={20} />
-            </Button>
-          ),
-        }}
-      />
-      <ScrollView className="flex-1 bg-background" contentContainerClassName="p-4 gap-6">
+    <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
+      <Stack.Screen options={{ title: vault.name }} />
+      <ScrollView className="flex-1 bg-background" contentContainerClassName="p-4 pt-24 gap-6">
         {/* Vault Header */}
         <View className="items-center gap-4 py-4">
           <View className="size-20 items-center justify-center rounded-full" style={{ backgroundColor: `${color}20` }}>
@@ -203,7 +192,7 @@ export default function VaultDetailScreen() {
           </View>
         </View>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 

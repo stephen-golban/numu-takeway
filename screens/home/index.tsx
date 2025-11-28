@@ -1,6 +1,4 @@
-import { startTransition, useEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivitySection } from "@/components/activity-section";
 import { AssetsSection } from "@/components/assets-section";
@@ -10,8 +8,6 @@ import { Text } from "@/components/ui/text";
 import DisconnectedView from "./disconnected-view";
 import useHomeScreen from "./hook";
 
-const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
-
 type HomeScreenProps = {
   isConnected: boolean;
 };
@@ -20,31 +16,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isConnected }) => {
   const { vaults, totalValue, change24h, changePercent, isLoading, refreshing, activities, ...handlers } =
     useHomeScreen();
 
-  const previousConnectedRef = useRef(isConnected);
-  const [shouldAnimate, setShouldAnimate] = useState(false);
-
-  useEffect(() => {
-    if (previousConnectedRef.current !== isConnected) {
-      previousConnectedRef.current = isConnected;
-      startTransition(() => {
-        setShouldAnimate(true);
-      });
-    }
-  }, [isConnected]);
-
-  const enteringAnimation = shouldAnimate ? FadeIn.duration(300) : undefined;
-  const exitingAnimation = shouldAnimate ? FadeOut.duration(200) : undefined;
-
   const _refreshControl = <RefreshControl onRefresh={handlers.handleRefresh} refreshing={refreshing} />;
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background" edges={["bottom", "top"]}>
       {isConnected ? (
-        <AnimatedScrollView
+        <ScrollView
           className="flex-1 gap-6 bg-background"
-          contentContainerClassName="pb-8"
-          entering={enteringAnimation}
-          exiting={exitingAnimation}
+          contentContainerClassName="pb-8 pt-8"
           refreshControl={_refreshControl}
         >
           <PortfolioHeader
@@ -61,11 +40,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isConnected }) => {
               <ActivitySection activities={activities} />
             </View>
           </View>
-        </AnimatedScrollView>
+        </ScrollView>
       ) : (
-        <Animated.View className="flex-1" entering={enteringAnimation} exiting={exitingAnimation}>
+        <View className="flex-1 pt-24">
           <DisconnectedView />
-        </Animated.View>
+        </View>
       )}
     </SafeAreaView>
   );

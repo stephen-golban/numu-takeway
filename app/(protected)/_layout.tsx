@@ -1,23 +1,27 @@
 import { useAccount } from "@reown/appkit-react-native";
 import { Stack } from "expo-router";
-import { HeaderRightActions } from "@/components/header-right-actions";
+import { useColorScheme } from "nativewind";
 import { NetworkBadge } from "@/components/ui/network-badge";
+import { HeaderRight } from "@/components/ui/screen-header";
+import { NAV_THEME } from "@/lib/theme";
 
 export default function ProtectedLayout() {
   const { isConnected } = useAccount();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   return (
     <Stack
       screenOptions={{
         headerTransparent: true,
-        headerTitleStyle: { fontSize: 24 },
-        headerRight: () => <HeaderRightActions />,
-        headerLeft: () => <NetworkBadge isConnected={isConnected} name="Base" />,
+        headerBlurEffect: isDark ? undefined : "light",
+        headerStyle: isDark ? { backgroundColor: NAV_THEME.dark.colors.background } : undefined,
+        headerLeft: ({ canGoBack }) => (canGoBack ? undefined : <NetworkBadge isConnected={isConnected} name="Base" />),
+        headerRight: () => <HeaderRight />,
       }}
     >
-      <Stack.Screen name="index" options={{ headerTitle: isConnected ? "Home" : "Let's Connect" }} />
-      <Stack.Screen name="settings" />
-      <Stack.Screen name="vault/[vaultKey]" />
+      <Stack.Screen name="index" options={{ title: isConnected ? "Home" : "Welcome" }} />
+      <Stack.Screen name="vault/[vaultKey]" options={{ headerBackTitle: "Back" }} />
     </Stack>
   );
 }

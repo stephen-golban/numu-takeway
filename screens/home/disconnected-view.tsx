@@ -2,7 +2,7 @@ import { ChartLineIcon, CoinsIcon, ShieldCheckIcon, SparklesIcon } from "lucide-
 import { View } from "react-native";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { WalletButton } from "@/components/wallet/wallet-button";
+import { WalletButton } from "@/components/wallet-button";
 
 type FeatureRowProps = {
   icon: typeof CoinsIcon;
@@ -41,7 +41,7 @@ const DisconnectedView = () => (
 
         <View className="items-center gap-3">
           <Text className="font-bold text-3xl tracking-tight">Welcome to Numu</Text>
-          <Text className="max-w-[300px] text-center text-base text-muted-foreground leading-relaxed">
+          <Text className="text-center text-base text-muted-foreground leading-relaxed">
             Your gateway to YO Protocol vaults on Base. Simple yields, low fees.
           </Text>
         </View>
