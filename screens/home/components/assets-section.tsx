@@ -70,18 +70,21 @@ function AssetsSectionContent({
   );
 }
 
-const AssetsSection: React.FC<AssetsSectionProps> = ({ vaults, onVaultPress, isLoading = false }) => (
-  <View className="gap-3 px-4">
-    <View className="flex-row items-center justify-between">
-      {isLoading ? (
-        <Skeleton className="h-5 w-24 bg-muted" />
-      ) : (
-        <Text className="font-semibold text-lg">Your Assets</Text>
-      )}
-      {!isLoading && <Text className="text-muted-foreground text-sm">{formatVaultCount(vaults.length)}</Text>}
+function AssetsSection({ vaults, onVaultPress, isLoading = false }: AssetsSectionProps) {
+  return (
+    <View className="gap-3 px-4">
+      <View className="flex-row items-center justify-between">
+        {isLoading ? (
+          <Skeleton className="h-5 w-24 bg-muted" />
+        ) : (
+          <Text className="font-semibold text-lg">Your Assets</Text>
+        )}
+        {!isLoading && <Text className="text-muted-foreground text-sm">{formatVaultCount(vaults.length)}</Text>}
+      </View>
+      <AssetsSectionContent isLoading={isLoading} onVaultPress={onVaultPress} vaults={vaults} />
     </View>
-    <AssetsSectionContent isLoading={isLoading} onVaultPress={onVaultPress} vaults={vaults} />
-  </View>
-);
+  );
+}
 
 export { AssetsSection };
+export type { AssetsSectionProps };

@@ -11,7 +11,7 @@ type ActivitySectionProps = {
   isLoading?: boolean;
 };
 
-const ActivityRow: React.FC<{ activity: Transaction }> = ({ activity }) => {
+function ActivityRow({ activity }: { activity: Transaction }) {
   const isDeposit = activity.type === "deposit";
   const IconComponent = isDeposit ? ArrowDownToLineIcon : ArrowUpFromLineIcon;
   const label = isDeposit ? "Deposited" : "Withdrew";
@@ -31,7 +31,7 @@ const ActivityRow: React.FC<{ activity: Transaction }> = ({ activity }) => {
       </View>
     </View>
   );
-};
+}
 
 function ActivityRowSkeleton() {
   return (
@@ -45,7 +45,7 @@ function ActivityRowSkeleton() {
   );
 }
 
-const ActivitySection: React.FC<ActivitySectionProps> = ({ activities, isLoading = false }) => {
+function ActivitySection({ activities, isLoading = false }: ActivitySectionProps) {
   if (isLoading) {
     return (
       <View className="gap-1">
@@ -74,6 +74,7 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({ activities, isLoading
       ))}
     </View>
   );
-};
+}
 
 export { ActivitySection };
+export type { ActivitySectionProps };

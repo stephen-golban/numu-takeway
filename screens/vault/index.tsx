@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert } from "@/components/ui/alert";
+import { formatTxHash } from "@/lib/utils";
 import {
   ActionCard,
   ActionCardSkeleton,
@@ -13,7 +14,6 @@ import {
   VaultHeaderSkeleton,
 } from "./components";
 import useVaultScreen from "./hook";
-import { formatTxHash } from "./util";
 
 function VaultScreenSkeleton() {
   return (

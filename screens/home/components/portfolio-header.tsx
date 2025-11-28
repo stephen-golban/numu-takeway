@@ -12,12 +12,7 @@ type PortfolioHeaderProps = {
   isLoading?: boolean;
 };
 
-const PortfolioHeader: React.FC<PortfolioHeaderProps> = ({
-  totalValue,
-  change24h,
-  changePercent,
-  isLoading = false,
-}) => {
+function PortfolioHeader({ totalValue, change24h, changePercent, isLoading = false }: PortfolioHeaderProps) {
   const isPositive = change24h >= 0;
 
   if (isLoading) {
@@ -50,6 +45,7 @@ const PortfolioHeader: React.FC<PortfolioHeaderProps> = ({
       </View>
     </View>
   );
-};
+}
 
 export { PortfolioHeader };
+export type { PortfolioHeaderProps };

@@ -2,6 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useVault } from "@/hooks/use-vault";
 import { fetchTokenPrices, fetchVaultAPYs } from "@/lib/api";
+import { validateAmount } from "@/lib/utils";
 import type { ActionConfig } from "./components";
 import type { ActiveTab } from "./type";
 import { getVaultData } from "./util";
@@ -39,25 +40,36 @@ export default function useVaultScreen() {
   const shareBalanceNum = Number.parseFloat(shareBalance);
   const usdValue = shareBalanceNum * price;
 
+  // Validate amounts
+  const depositValidation = useMemo(
+    () => validateAmount(depositAmount, vault.asset.decimals, assetBalance),
+    [depositAmount, vault.asset.decimals, assetBalance]
+  );
+
+  const withdrawValidation = useMemo(
+    () => validateAmount(withdrawAmount, vault.decimals, shareBalance),
+    [withdrawAmount, vault.decimals, shareBalance]
+  );
+
   const handleDeposit = useCallback(async () => {
-    if (!depositAmount || Number.parseFloat(depositAmount) <= 0) {
+    if (!depositValidation.isValid) {
       return;
     }
     const success = await deposit(depositAmount);
     if (success) {
       setDepositAmount("");
     }
-  }, [deposit, depositAmount]);
+  }, [deposit, depositAmount, depositValidation.isValid]);
 
   const handleWithdraw = useCallback(async () => {
-    if (!withdrawAmount || Number.parseFloat(withdrawAmount) <= 0) {
+    if (!withdrawValidation.isValid) {
       return;
     }
     const success = await withdraw(withdrawAmount);
     if (success) {
       setWithdrawAmount("");
     }
-  }, [withdraw, withdrawAmount]);
+  }, [withdraw, withdrawAmount, withdrawValidation.isValid]);
 
   // Grouped action configs for cleaner component wiring
   const depositConfig: ActionConfig = useMemo(
@@ -66,8 +78,10 @@ export default function useVaultScreen() {
       onAmountChange: setDepositAmount,
       onSubmit: handleDeposit,
       symbol: vault.asset.symbol,
+      validationError: depositValidation.error,
+      isValid: depositValidation.isValid,
     }),
-    [depositAmount, handleDeposit, vault.asset.symbol]
+    [depositAmount, handleDeposit, vault.asset.symbol, depositValidation.error, depositValidation.isValid]
   );
 
   const withdrawConfig: ActionConfig = useMemo(
@@ -76,8 +90,10 @@ export default function useVaultScreen() {
       onAmountChange: setWithdrawAmount,
       onSubmit: handleWithdraw,
       symbol: vault.symbol,
+      validationError: withdrawValidation.error,
+      isValid: withdrawValidation.isValid,
     }),
-    [withdrawAmount, handleWithdraw, vault.symbol]
+    [withdrawAmount, handleWithdraw, vault.symbol, withdrawValidation.error, withdrawValidation.isValid]
   );
 
   // Position data grouped for the position card

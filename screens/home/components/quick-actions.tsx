@@ -46,14 +46,14 @@ type QuickActionsProps = {
   isLoading?: boolean;
 };
 
-const QuickActions: React.FC<QuickActionsProps> = ({
+function QuickActions({
   onDeposit,
   onWithdraw,
   onSwap,
   onSend,
   disabled = false,
   isLoading = false,
-}) => {
+}: QuickActionsProps) {
   if (isLoading) {
     return (
       <View className="flex-row items-center justify-center gap-8 py-4">
@@ -71,6 +71,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       {onSend && <QuickAction disabled={disabled} icon={SendIcon} label="Send" onPress={onSend} />}
     </View>
   );
-};
+}
 
 export { QuickActions };
+export type { QuickActionsProps };

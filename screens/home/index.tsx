@@ -5,7 +5,7 @@ import { Text } from "@/components/ui/text";
 import { ActivitySection, AssetsSection, PortfolioHeader, QuickActions } from "./components";
 import useHomeScreen from "./hook";
 
-const HomeScreen = () => {
+function HomeScreen() {
   const { vaults, totalValue, change24h, changePercent, isLoading, refreshing, activities, ...handlers } =
     useHomeScreen();
 
@@ -44,6 +44,6 @@ const HomeScreen = () => {
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 export default HomeScreen;
