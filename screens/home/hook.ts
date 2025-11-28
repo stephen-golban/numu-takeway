@@ -1,7 +1,12 @@
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
+import type { ActivityItem } from "@/components/activity-section";
 import { usePortfolio } from "@/hooks/use-portfolio";
-import { DEFAULT_VAULT_KEY, MOCK_ACTIVITIES } from "./util";
+import { DEFAULT_VAULT_KEY } from "./util";
+
+// Activities would come from an indexer or transaction history API
+// For now, we show empty state since there's no real-time tx history from Reown
+const EMPTY_ACTIVITIES: ActivityItem[] = [];
 
 export default function useHomeScreen() {
   const { vaults, totalValue, change24h, changePercent, isLoading, refetch } = usePortfolio();
@@ -25,7 +30,7 @@ export default function useHomeScreen() {
     changePercent,
     isLoading,
     refreshing,
-    activities: MOCK_ACTIVITIES,
+    activities: EMPTY_ACTIVITIES,
     handleRefresh,
     handleVaultPress,
   };

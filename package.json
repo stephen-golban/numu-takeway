@@ -17,6 +17,7 @@
     "@react-navigation/native": "^7.0.0",
     "@reown/appkit-ethers-react-native": "^2.0.1",
     "@reown/appkit-react-native": "^2.0.1",
+    "@rn-primitives/dialog": "^1.2.0",
     "@rn-primitives/portal": "~1.3.0",
     "@rn-primitives/separator": "^1.2.0",
     "@rn-primitives/slot": "^1.2.0",

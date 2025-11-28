@@ -2,6 +2,7 @@ import { useAccount, useAppKit } from "@reown/appkit-react-native";
 import { MoonStarIcon, SunIcon, WalletIcon } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { View } from "react-native";
+import { SettingsDialog } from "@/components/settings-dialog";
 import { Button } from "./button";
 import { Icon } from "./icon";
 
@@ -52,7 +53,7 @@ function WalletButton() {
 }
 
 /**
- * Combined header right actions with theme toggle and wallet button.
+ * Combined header right actions with theme toggle, settings, and wallet button.
  */
 function HeaderRight() {
   const { isConnected } = useAccount();
@@ -60,7 +61,12 @@ function HeaderRight() {
   return (
     <View className="flex-row items-center gap-1">
       <ThemeToggle />
-      {isConnected && <WalletButton />}
+      {isConnected && (
+        <>
+          <SettingsDialog />
+          <WalletButton />
+        </>
+      )}
     </View>
   );
 }
