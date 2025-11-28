@@ -1,19 +1,15 @@
 import { Stack } from "expo-router";
-import { NetworkBadge } from "@/components/ui/network-badge";
-import { useHeaderOptions } from "@/lib/use-header-options";
+import { createHeaderConfig } from "@/components/header";
+import { useCustomColorScheme } from "@/hooks/use-custom-color-scheme";
 import WelcomeScreen from "@/screens/welcome";
 
 export default function Welcome() {
-  const headerOptions = useHeaderOptions("Welcome");
+  const { isDark } = useCustomColorScheme();
+  const headerOptions = createHeaderConfig({ title: "Welcome", isDark, isConnected: false });
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          ...headerOptions,
-          headerLeft: () => <NetworkBadge isConnected={false} name="Base" />,
-        }}
-      />
+      <Stack.Screen options={headerOptions} />
       <WelcomeScreen />
     </>
   );

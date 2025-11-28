@@ -5,30 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 
-function formatAddress(address: string): string {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
+type WalletButtonProps = {
+  variant?: "default" | "header";
+};
 
-export function WalletButton() {
+/**
+ * Wallet connection button with two variants:
+ * - "default": Full button with "Connect Wallet" text for welcome/disconnected screens
+ * - "header": Compact icon-only button for the header with connection status dot
+ */
+export function WalletButton({ variant = "default" }: WalletButtonProps) {
   const { open } = useAppKit();
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
-  function handlePress() {
-    open();
-  }
-
-  if (isConnected && address) {
+  if (variant === "header") {
     return (
       <Button
-        accessibilityHint="Tap to view wallet options"
-        accessibilityLabel="Connected wallet address"
+        accessibilityHint="Tap to manage wallet connection"
+        accessibilityLabel="Wallet"
         accessibilityRole="button"
-        className="flex-row items-center gap-2"
-        onPress={handlePress}
-        variant="outline"
+        onPress={() => open()}
+        size="icon"
+        variant="ghost"
       >
-        <View className="h-2 w-2 rounded-full bg-green-500" />
-        <Text>{formatAddress(address)}</Text>
+        <View className="relative">
+          <Icon as={Wallet} className="size-5 text-foreground" />
+          {isConnected && <View className="-right-0.5 -top-0.5 absolute size-2 rounded-full bg-green-500" />}
+        </View>
       </Button>
     );
   }
@@ -39,7 +42,7 @@ export function WalletButton() {
       accessibilityLabel="Connect wallet"
       accessibilityRole="button"
       className="flex-row items-center gap-2"
-      onPress={handlePress}
+      onPress={() => open()}
     >
       <Icon as={Wallet} className="text-primary-foreground" size={18} />
       <Text>Connect Wallet</Text>

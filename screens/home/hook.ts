@@ -1,9 +1,9 @@
 import { useAccount } from "@reown/appkit-react-native";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import type { ActivityItem } from "@/components/activity-section";
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { fetchTransactionHistory } from "@/lib/api";
+import type { ActivityItem } from "./activity-section";
 import { DEFAULT_VAULT_KEY } from "./util";
 
 export default function useHomeScreen() {

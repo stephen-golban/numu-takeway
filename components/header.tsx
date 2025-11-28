@@ -1,0 +1,37 @@
+import type { ExtendedStackNavigationOptions } from "expo-router/build/layouts/StackClient";
+import { View } from "react-native";
+import { NAV_THEME } from "@/lib/theme";
+import { NetworkBadge } from "./network-badge";
+import { ThemeToggle } from "./theme-toggle";
+import { WalletButton } from "./wallet-button";
+
+const createHeaderLeft = (isConnected: boolean, showNetworkBadge = false) => {
+  if (showNetworkBadge) {
+    return <NetworkBadge isConnected={isConnected} name="Base" />;
+  }
+  return;
+};
+
+const createHeaderRight = (isConnected: boolean) => (
+  <View className="flex-row items-center gap-1">
+    <ThemeToggle />
+    {isConnected && <WalletButton variant="header" />}
+  </View>
+);
+
+type HeaderConfigProps = {
+  title?: string;
+  isDark: boolean;
+  isConnected: boolean;
+  showNetworkBadge?: boolean;
+};
+
+export const createHeaderConfig = ({ title, isDark, isConnected, showNetworkBadge = false }: HeaderConfigProps) =>
+  ({
+    title,
+    headerTransparent: true,
+    headerBlurEffect: isDark ? undefined : "light",
+    headerRight: () => createHeaderRight(isConnected),
+    headerLeft: () => createHeaderLeft(isConnected, showNetworkBadge),
+    headerStyle: isDark ? { backgroundColor: NAV_THEME.dark.colors.background } : undefined,
+  }) as ExtendedStackNavigationOptions;

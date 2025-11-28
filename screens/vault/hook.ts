@@ -12,6 +12,7 @@ export default function useVaultScreen() {
   const { vaultKey } = useLocalSearchParams<{ vaultKey: string }>();
   const [prices, setPrices] = useState<PriceData | undefined>(undefined);
   const [apys, setApys] = useState<APYData | undefined>(undefined);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   const { validVaultKey, vault, color, apy, price } = getVaultData(vaultKey, prices, apys);
   const { shareBalance, assetBalance, isLoading, error, txHash, deposit, withdraw } = useVault(validVaultKey);
@@ -21,9 +22,13 @@ export default function useVaultScreen() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("deposit");
 
   const loadData = useCallback(async () => {
-    const [priceData, apyData] = await Promise.all([fetchTokenPrices(), fetchVaultAPYs()]);
-    setPrices(priceData);
-    setApys(apyData);
+    try {
+      const [priceData, apyData] = await Promise.all([fetchTokenPrices(), fetchVaultAPYs()]);
+      setPrices(priceData);
+      setApys(apyData);
+    } finally {
+      setIsDataLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -61,6 +66,7 @@ export default function useVaultScreen() {
     usdValue,
     assetBalance,
     isLoading,
+    isDataLoading,
     error,
     txHash,
     activeTab,
