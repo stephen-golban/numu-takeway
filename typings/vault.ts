@@ -16,13 +16,3 @@ export type VaultPosition = {
   color: string;
   priceChange24h?: number;
 };
-
-/**
- * @deprecated Use VaultPosition instead
- */
-export type VaultAsset = VaultPosition;
-
-/**
- * @deprecated Use VaultPosition instead
- */
-export type VaultBalance = VaultPosition;

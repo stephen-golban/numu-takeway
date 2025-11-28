@@ -2,6 +2,9 @@ import { VAULTS, type VaultKey } from "@/config/yo-protocol";
 import { DEFAULT_APYS, DEFAULT_PRICES, VAULT_COLORS } from "@/lib/defaults";
 import type { VaultData } from "./type";
 
+// Re-export formatTxHash from centralized utils for backwards compatibility
+export { formatTxHash } from "@/lib/utils";
+
 export function getVaultData(
   vaultKey: string | undefined,
   prices?: Record<string, { price: number; change24h: number }>,
@@ -19,8 +22,4 @@ export function getVaultData(
     apy,
     price,
   };
-}
-
-export function formatTxHash(hash: string): string {
-  return `${hash.slice(0, 16)}...${hash.slice(-12)}`;
 }

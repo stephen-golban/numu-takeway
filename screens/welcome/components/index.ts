@@ -1,2 +1,3 @@
-export { default as FeatureRow } from "./feature-row";
-export { default as HeroSection } from "./hero-section";
+export type { FeatureRowProps } from "./feature-row";
+export { FeatureRow } from "./feature-row";
+export { HeroSection } from "./hero-section";

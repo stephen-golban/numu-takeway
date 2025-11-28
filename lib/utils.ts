@@ -36,3 +36,22 @@ export const formatRelativeTime = (date: Date): string => {
   }
   return `${diffDays}d ago`;
 };
+
+/**
+ * Truncates a string (address, tx hash, etc.) showing first and last N characters.
+ * @param value The string to truncate
+ * @param startChars Number of characters to show at start (default: 6)
+ * @param endChars Number of characters to show at end (default: 4)
+ */
+export const formatTruncated = (value: string, startChars = 6, endChars = 4): string =>
+  `${value.slice(0, startChars)}...${value.slice(-endChars)}`;
+
+/**
+ * Formats a wallet address for display (0x1234...5678)
+ */
+export const formatAddress = (address: string): string => formatTruncated(address, 6, 4);
+
+/**
+ * Formats a transaction hash for display (0x12345678901234...123456789012)
+ */
+export const formatTxHash = (hash: string): string => formatTruncated(hash, 16, 12);

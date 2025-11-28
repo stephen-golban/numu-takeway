@@ -1,4 +1,4 @@
-export type { VaultAsset, VaultBalance, VaultPosition } from "./vault";
+export type { VaultPosition } from "./vault";
 
 /**
  * Transaction activity type for vault deposits and withdrawals.

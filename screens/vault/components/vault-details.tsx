@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { DataRow } from "@/components/data-row";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatAddress } from "@/lib/utils";
 
 type VaultDetailsProps = {
   assetName: string;
@@ -9,10 +10,6 @@ type VaultDetailsProps = {
   address: string;
   network?: string;
 };
-
-function formatAddress(address: string): string {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
 
 function VaultDetails({ assetName, symbol, address, network = "Base" }: VaultDetailsProps) {
   return (
