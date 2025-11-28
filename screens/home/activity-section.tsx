@@ -4,24 +4,14 @@ import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { formatRelativeTime } from "@/lib/utils";
-
-type ActivityType = "deposit" | "withdraw";
-
-type ActivityItem = {
-  id: string;
-  type: ActivityType;
-  amount: string;
-  symbol: string;
-  timestamp: Date;
-  txHash?: string;
-};
+import type { Transaction } from "@/typings";
 
 type ActivitySectionProps = {
-  activities: ActivityItem[];
+  activities: Transaction[];
   isLoading?: boolean;
 };
 
-const ActivityRow: React.FC<{ activity: ActivityItem }> = ({ activity }) => {
+const ActivityRow: React.FC<{ activity: Transaction }> = ({ activity }) => {
   const isDeposit = activity.type === "deposit";
   const IconComponent = isDeposit ? ArrowDownToLineIcon : ArrowUpFromLineIcon;
   const label = isDeposit ? "Deposited" : "Withdrew";
@@ -86,5 +76,4 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({ activities, isLoading
   );
 };
 
-export type { ActivityItem, ActivityType };
 export { ActivitySection };

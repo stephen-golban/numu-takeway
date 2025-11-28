@@ -1,3 +1,6 @@
+import type { Transaction } from "@/typings";
+import { DEFAULT_APYS, DEFAULT_PRICES, TRANSACTION_FETCH_LIMIT } from "./defaults";
+
 // CoinGecko API for token prices (free tier, no API key required)
 const COINGECKO_API = "https://api.coingecko.com/api/v3";
 
@@ -44,14 +47,13 @@ export async function fetchTokenPrices(): Promise<Record<string, { price: number
     }
 
     return prices;
-  } catch (error) {
-    console.warn("[CoinGecko] Failed to fetch prices:", error);
-    // Return fallback prices
-    return {
-      USDC: { price: 1.0, change24h: 0 },
-      WETH: { price: 3500, change24h: 0 },
-      cbBTC: { price: 97_500, change24h: 0 },
-    };
+  } catch {
+    // Return fallback prices when API fails
+    const fallback: Record<string, { price: number; change24h: number }> = {};
+    for (const [symbol, price] of Object.entries(DEFAULT_PRICES)) {
+      fallback[symbol] = { price, change24h: 0 };
+    }
+    return fallback;
   }
 }
 
@@ -97,14 +99,9 @@ export async function fetchVaultAPYs(): Promise<Record<string, number>> {
     }
 
     return apys;
-  } catch (error) {
-    console.warn("[DefiLlama] Failed to fetch APYs:", error);
-    // Return fallback APYs
-    return {
-      yoUSD: 5.2,
-      yoETH: 3.8,
-      yoBTC: 4.2,
-    };
+  } catch {
+    // Return fallback APYs when API fails
+    return { ...DEFAULT_APYS };
   }
 }
 
@@ -126,22 +123,13 @@ type BasescanResponse = {
   result: BasescanTx[];
 };
 
-export type ParsedTransaction = {
-  id: string;
-  type: "deposit" | "withdraw";
-  amount: string;
-  symbol: string;
-  timestamp: Date;
-  txHash: string;
-};
-
 const YO_GATEWAY = "0xF1EeE0957267b1A474323Ff9CfF7719E964969FA".toLowerCase();
 
-export async function fetchTransactionHistory(address: string): Promise<ParsedTransaction[]> {
+export async function fetchTransactionHistory(address: string): Promise<Transaction[]> {
   try {
     // Fetch transactions to/from the YoGateway contract
     const response = await fetch(
-      `${BASESCAN_API}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&page=1&offset=20`
+      `${BASESCAN_API}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&page=1&offset=${TRANSACTION_FETCH_LIMIT}`
     );
 
     if (!response.ok) {
@@ -168,8 +156,8 @@ export async function fetchTransactionHistory(address: string): Promise<ParsedTr
         txHash: tx.hash,
       };
     });
-  } catch (error) {
-    console.warn("Failed to fetch transactions from Basescan:", error);
+  } catch {
+    // Return empty array when API fails
     return [];
   }
 }

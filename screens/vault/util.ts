@@ -1,20 +1,6 @@
 import { VAULTS, type VaultKey } from "@/config/yo-protocol";
-import { VAULT_COLORS } from "@/hooks/use-portfolio";
+import { DEFAULT_APYS, DEFAULT_PRICES, VAULT_COLORS } from "@/lib/defaults";
 import type { VaultData } from "./type";
-
-// Default prices as fallback
-const DEFAULT_PRICES: Record<string, number> = {
-  USDC: 1.0,
-  WETH: 3500,
-  cbBTC: 97_500,
-};
-
-// Default APYs as fallback
-const DEFAULT_APYS: Record<VaultKey, number> = {
-  yoUSD: 5.2,
-  yoETH: 3.8,
-  yoBTC: 4.2,
-};
 
 export function getVaultData(
   vaultKey: string | undefined,

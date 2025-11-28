@@ -3,13 +3,7 @@ import { BrowserProvider, Contract, formatUnits } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import { ERC20_ABI, VAULTS, type VaultKey } from "@/config/yo-protocol";
 import { fetchTokenPrices, fetchVaultAPYs } from "@/lib/api";
-
-// Vault display colors
-const VAULT_COLORS: Record<VaultKey, string> = {
-  yoUSD: "#22c55e", // green
-  yoETH: "#3b82f6", // blue
-  yoBTC: "#f59e0b", // amber
-};
+import { VAULT_COLORS } from "@/lib/defaults";
 
 type VaultBalance = {
   vaultKey: VaultKey;
@@ -138,5 +132,3 @@ export function usePortfolio() {
     refetch: fetchPortfolio,
   };
 }
-
-export { VAULT_COLORS };

@@ -2,6 +2,7 @@ import { useAccount, useProvider } from "@reown/appkit-react-native";
 import { BrowserProvider, Contract, formatUnits, parseUnits } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import { ERC20_ABI, PARTNER_ID, VAULTS, type VaultKey, YO_GATEWAY_ABI, YO_GATEWAY_ADDRESS } from "@/config/yo-protocol";
+import { SLIPPAGE_DENOMINATOR, SLIPPAGE_TOLERANCE_BPS } from "@/lib/defaults";
 
 type VaultState = {
   shareBalance: string;
@@ -15,6 +16,20 @@ type TransactionState = {
   error: string | null;
   txHash: string | null;
 };
+
+// Calculate minimum output with slippage tolerance
+function applySlippage(amount: bigint): bigint {
+  return (amount * (SLIPPAGE_DENOMINATOR - SLIPPAGE_TOLERANCE_BPS)) / SLIPPAGE_DENOMINATOR;
+}
+
+// Check and approve token allowance if needed
+async function ensureAllowance(tokenContract: Contract, owner: string, spender: string, amount: bigint): Promise<void> {
+  const allowance = await tokenContract.allowance(owner, spender);
+  if (allowance < amount) {
+    const approveTx = await tokenContract.approve(spender, amount);
+    await approveTx.wait();
+  }
+}
 
 export function useVault(vaultKey: VaultKey = "yoUSD") {
   const { address, isConnected } = useAccount();
@@ -81,11 +96,7 @@ export function useVault(vaultKey: VaultKey = "yoUSD") {
   const deposit = useCallback(
     async (amount: string): Promise<boolean> => {
       if (!(isConnected && address && provider)) {
-        setTxState({
-          isLoading: false,
-          error: "Wallet not connected",
-          txHash: null,
-        });
+        setTxState({ isLoading: false, error: "Wallet not connected", txHash: null });
         return false;
       }
 
@@ -100,19 +111,13 @@ export function useVault(vaultKey: VaultKey = "yoUSD") {
         const signer = await ethersProvider.getSigner();
         const assets = parseUnits(amount, vault.asset.decimals);
 
-        // Check and approve allowance
+        // Ensure approval and execute deposit
         const assetContract = new Contract(vault.asset.address, ERC20_ABI, signer);
-        const allowance = await assetContract.allowance(address, YO_GATEWAY_ADDRESS);
+        await ensureAllowance(assetContract, address, YO_GATEWAY_ADDRESS, assets);
 
-        if (allowance < assets) {
-          const approveTx = await assetContract.approve(YO_GATEWAY_ADDRESS, assets);
-          await approveTx.wait();
-        }
-
-        // Get quote and deposit
         const gateway = new Contract(YO_GATEWAY_ADDRESS, YO_GATEWAY_ABI, signer);
         const quotedShares = await gateway.quoteConvertToShares(vault.address, assets);
-        const minSharesOut = (quotedShares * 99n) / 100n; // 1% slippage
+        const minSharesOut = applySlippage(quotedShares);
 
         const tx = await gateway.deposit(vault.address, assets, minSharesOut, address, PARTNER_ID);
         const receipt = await tx.wait();
@@ -135,11 +140,7 @@ export function useVault(vaultKey: VaultKey = "yoUSD") {
   const withdraw = useCallback(
     async (shares: string): Promise<boolean> => {
       if (!(isConnected && address && provider)) {
-        setTxState({
-          isLoading: false,
-          error: "Wallet not connected",
-          txHash: null,
-        });
+        setTxState({ isLoading: false, error: "Wallet not connected", txHash: null });
         return false;
       }
 
@@ -154,19 +155,13 @@ export function useVault(vaultKey: VaultKey = "yoUSD") {
         const signer = await ethersProvider.getSigner();
         const sharesAmount = parseUnits(shares, vault.decimals);
 
-        // Check and approve share allowance
+        // Ensure approval and execute withdrawal
         const vaultContract = new Contract(vault.address, ERC20_ABI, signer);
-        const allowance = await vaultContract.allowance(address, YO_GATEWAY_ADDRESS);
+        await ensureAllowance(vaultContract, address, YO_GATEWAY_ADDRESS, sharesAmount);
 
-        if (allowance < sharesAmount) {
-          const approveTx = await vaultContract.approve(YO_GATEWAY_ADDRESS, sharesAmount);
-          await approveTx.wait();
-        }
-
-        // Get quote and redeem
         const gateway = new Contract(YO_GATEWAY_ADDRESS, YO_GATEWAY_ABI, signer);
         const quotedAssets = await gateway.quoteConvertToAssets(vault.address, sharesAmount);
-        const minAssetsOut = (quotedAssets * 99n) / 100n; // 1% slippage
+        const minAssetsOut = applySlippage(quotedAssets);
 
         const tx = await gateway.redeem(vault.address, sharesAmount, minAssetsOut, address, PARTNER_ID);
         const receipt = await tx.wait();

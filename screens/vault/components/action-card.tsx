@@ -30,33 +30,25 @@ function ActionForm({ label, amount, onAmountChange, onSubmit, isLoading, submit
   );
 }
 
-type ActionCardProps = {
-  activeTab: ActiveTab;
-  onTabChange: (tab: ActiveTab) => void;
-  depositAmount: string;
-  withdrawAmount: string;
-  onDepositAmountChange: (value: string) => void;
-  onWithdrawAmountChange: (value: string) => void;
-  onDeposit: () => void;
-  onWithdraw: () => void;
-  isLoading: boolean;
-  assetSymbol: string;
+type ActionConfig = {
+  amount: string;
+  onAmountChange: (value: string) => void;
+  onSubmit: () => void;
   symbol: string;
 };
 
-function ActionCard({
-  activeTab,
-  onTabChange,
-  depositAmount,
-  withdrawAmount,
-  onDepositAmountChange,
-  onWithdrawAmountChange,
-  onDeposit,
-  onWithdraw,
-  isLoading,
-  assetSymbol,
-  symbol,
-}: ActionCardProps) {
+type ActionCardProps = {
+  activeTab: ActiveTab;
+  onTabChange: (tab: ActiveTab) => void;
+  deposit: ActionConfig;
+  withdraw: ActionConfig;
+  isLoading: boolean;
+};
+
+function ActionCard({ activeTab, onTabChange, deposit, withdraw, isLoading }: ActionCardProps) {
+  const config = activeTab === "deposit" ? deposit : withdraw;
+  const action = activeTab === "deposit" ? "Deposit" : "Withdraw";
+
   return (
     <Card className="border-0">
       <CardHeader className="pb-0">
@@ -72,25 +64,14 @@ function ActionCard({
         </Tabs>
       </CardHeader>
       <CardContent>
-        {activeTab === "deposit" ? (
-          <ActionForm
-            amount={depositAmount}
-            isLoading={isLoading}
-            label={assetSymbol}
-            onAmountChange={onDepositAmountChange}
-            onSubmit={onDeposit}
-            submitLabel={`Deposit ${assetSymbol}`}
-          />
-        ) : (
-          <ActionForm
-            amount={withdrawAmount}
-            isLoading={isLoading}
-            label={symbol}
-            onAmountChange={onWithdrawAmountChange}
-            onSubmit={onWithdraw}
-            submitLabel={`Withdraw ${symbol}`}
-          />
-        )}
+        <ActionForm
+          amount={config.amount}
+          isLoading={isLoading}
+          label={config.symbol}
+          onAmountChange={config.onAmountChange}
+          onSubmit={config.onSubmit}
+          submitLabel={`${action} ${config.symbol}`}
+        />
       </CardContent>
     </Card>
   );
@@ -116,4 +97,4 @@ function ActionCardSkeleton() {
 }
 
 export { ActionCard, ActionCardSkeleton, ActionForm };
-export type { ActionCardProps, ActionFormProps };
+export type { ActionCardProps, ActionConfig, ActionFormProps };

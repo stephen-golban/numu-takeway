@@ -1,11 +1,11 @@
 import { WalletIcon } from "lucide-react-native";
 import { View } from "react-native";
-import { formatVaultCount } from "@/screens/home/util";
+import { AssetCard } from "@/components/asset-card";
+import { EmptyState } from "@/components/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Text } from "@/components/ui/text";
 import type { VaultAsset } from "@/typings/vault";
-import { AssetCard } from "./ui/asset-card";
-import { EmptyState } from "./ui/empty-state";
-import { Skeleton } from "./ui/skeleton";
-import { Text } from "./ui/text";
+import { formatVaultCount } from "./util";
 
 type AssetsSectionProps = {
   vaults: VaultAsset[];

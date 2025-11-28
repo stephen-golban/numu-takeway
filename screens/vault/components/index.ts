@@ -1,4 +1,4 @@
-export type { ActionCardProps, ActionFormProps } from "./action-card";
+export type { ActionCardProps, ActionConfig, ActionFormProps } from "./action-card";
 export { ActionCard, ActionCardSkeleton, ActionForm } from "./action-card";
 export type { PositionCardProps } from "./position-card";
 export { PositionCard, PositionCardSkeleton } from "./position-card";

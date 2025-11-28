@@ -1,7 +1,8 @@
 import { useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useVault } from "@/hooks/use-vault";
 import { fetchTokenPrices, fetchVaultAPYs } from "@/lib/api";
+import type { ActionConfig } from "./components";
 import type { ActiveTab } from "./type";
 import { getVaultData } from "./util";
 
@@ -38,7 +39,7 @@ export default function useVaultScreen() {
   const shareBalanceNum = Number.parseFloat(shareBalance);
   const usdValue = shareBalanceNum * price;
 
-  async function handleDeposit() {
+  const handleDeposit = useCallback(async () => {
     if (!depositAmount || Number.parseFloat(depositAmount) <= 0) {
       return;
     }
@@ -46,9 +47,9 @@ export default function useVaultScreen() {
     if (success) {
       setDepositAmount("");
     }
-  }
+  }, [deposit, depositAmount]);
 
-  async function handleWithdraw() {
+  const handleWithdraw = useCallback(async () => {
     if (!withdrawAmount || Number.parseFloat(withdrawAmount) <= 0) {
       return;
     }
@@ -56,26 +57,59 @@ export default function useVaultScreen() {
     if (success) {
       setWithdrawAmount("");
     }
-  }
+  }, [withdraw, withdrawAmount]);
+
+  // Grouped action configs for cleaner component wiring
+  const depositConfig: ActionConfig = useMemo(
+    () => ({
+      amount: depositAmount,
+      onAmountChange: setDepositAmount,
+      onSubmit: handleDeposit,
+      symbol: vault.asset.symbol,
+    }),
+    [depositAmount, handleDeposit, vault.asset.symbol]
+  );
+
+  const withdrawConfig: ActionConfig = useMemo(
+    () => ({
+      amount: withdrawAmount,
+      onAmountChange: setWithdrawAmount,
+      onSubmit: handleWithdraw,
+      symbol: vault.symbol,
+    }),
+    [withdrawAmount, handleWithdraw, vault.symbol]
+  );
+
+  // Position data grouped for the position card
+  const position = useMemo(
+    () => ({
+      shareBalance: shareBalanceNum,
+      assetBalance,
+      usdValue,
+    }),
+    [shareBalanceNum, assetBalance, usdValue]
+  );
+
+  // Transaction state grouped together
+  const txState = useMemo(
+    () => ({
+      isLoading,
+      error,
+      txHash,
+    }),
+    [isLoading, error, txHash]
+  );
 
   return {
     vault,
     color,
     apy,
-    shareBalanceNum,
-    usdValue,
-    assetBalance,
-    isLoading,
+    position,
+    txState,
     isDataLoading,
-    error,
-    txHash,
     activeTab,
-    depositAmount,
-    withdrawAmount,
     setActiveTab,
-    setDepositAmount,
-    setWithdrawAmount,
-    handleDeposit,
-    handleWithdraw,
+    depositConfig,
+    withdrawConfig,
   };
 }

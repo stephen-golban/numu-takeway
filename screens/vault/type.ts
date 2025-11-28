@@ -1,4 +1,5 @@
 import type { VaultConfig, VaultKey } from "@/config/yo-protocol";
+import type { VaultActionTab } from "@/typings";
 
 export type VaultScreenParams = {
   vaultKey: VaultKey;
@@ -11,4 +12,5 @@ export type VaultData = {
   price: number;
 };
 
-export type ActiveTab = "deposit" | "withdraw";
+// Re-export for backwards compatibility
+export type ActiveTab = VaultActionTab;

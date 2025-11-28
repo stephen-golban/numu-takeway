@@ -31,21 +31,13 @@ function VaultScreen() {
     vault,
     color,
     apy,
-    shareBalanceNum,
-    usdValue,
-    assetBalance,
-    isLoading,
+    position,
+    txState,
     isDataLoading,
-    error,
-    txHash,
     activeTab,
-    depositAmount,
-    withdrawAmount,
     setActiveTab,
-    setDepositAmount,
-    setWithdrawAmount,
-    handleDeposit,
-    handleWithdraw,
+    depositConfig,
+    withdrawConfig,
   } = useVaultScreen();
 
   return (
@@ -58,30 +50,26 @@ function VaultScreen() {
           <>
             <VaultHeader apy={apy} color={color} name={vault.name} symbol={vault.symbol} />
             <PositionCard
-              assetBalance={assetBalance}
+              assetBalance={position.assetBalance}
               assetSymbol={vault.asset.symbol}
-              shareBalance={shareBalanceNum}
+              shareBalance={position.shareBalance}
               symbol={vault.symbol}
-              usdValue={usdValue}
+              usdValue={position.usdValue}
             />
             <ActionCard
               activeTab={activeTab}
-              assetSymbol={vault.asset.symbol}
-              depositAmount={depositAmount}
-              isLoading={isLoading}
-              onDeposit={handleDeposit}
-              onDepositAmountChange={setDepositAmount}
+              deposit={depositConfig}
+              isLoading={txState.isLoading}
               onTabChange={setActiveTab}
-              onWithdraw={handleWithdraw}
-              onWithdrawAmountChange={setWithdrawAmount}
-              symbol={vault.symbol}
-              withdrawAmount={withdrawAmount}
+              withdraw={withdrawConfig}
             />
             <VaultDetails address={vault.address} assetName={vault.asset.name} symbol={vault.symbol} />
           </>
         )}
-        {error && <Alert message={error} variant="destructive" />}
-        {txHash && <Alert description={formatTxHash(txHash)} message="Transaction successful!" variant="success" />}
+        {txState.error && <Alert message={txState.error} variant="destructive" />}
+        {txState.txHash && (
+          <Alert description={formatTxHash(txState.txHash)} message="Transaction successful!" variant="success" />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
