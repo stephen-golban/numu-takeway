@@ -1,5 +1,6 @@
 import "@walletconnect/react-native-compat";
 import "@/global.css";
+
 import { Slot, SplashScreen, Stack } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { View } from "react-native";
@@ -27,7 +28,7 @@ function RootNavigator({ theme }: { theme: "light" | "dark" }) {
   const onLayout = () => SplashScreen.hide();
 
   return (
-    <View className="flex-1 bg-background" onLayout={onLayout}>
+    <View onLayout={onLayout} style={{ flex: 1, backgroundColor }}>
       <Stack
         screenOptions={{
           headerShadowVisible: false,

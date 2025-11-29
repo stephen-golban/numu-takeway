@@ -4,7 +4,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
-import { appKit } from "@/config/appkit";
+import { appKit } from "@/lib/appkit";
 import { NAV_THEME } from "@/lib/theme";
 
 type AppProvidersProps = React.PropsWithChildren<{
