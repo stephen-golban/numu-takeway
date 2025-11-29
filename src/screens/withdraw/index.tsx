@@ -1,64 +1,13 @@
-import { useRouter } from "expo-router";
-import { AlertTriangleIcon, ArrowUpFromLineIcon, CoinsIcon, TimerIcon } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
+import { AlertTriangleIcon, ArrowUpFromLineIcon, CoinsIcon, LoaderIcon, TimerIcon } from "lucide-react-native";
+import { Controller } from "react-hook-form";
+import { Pressable, TextInput, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { useYoVault } from "@/lib/yo-protocol/hooks";
-
-const PERCENTAGE_OPTIONS = [25, 50, 75, 100];
+import { PERCENTAGE_OPTIONS, useWithdrawScreen } from "./hook";
 
 export default function WithdrawScreen() {
-  const router = useRouter();
-  const { yoUsdBalance, withdraw, quoteWithdraw, isLoading } = useYoVault();
-
-  const [amount, setAmount] = useState("");
-  const [quote, setQuote] = useState("0");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchQuote = async () => {
-      if (!amount || Number.parseFloat(amount) <= 0) {
-        setQuote("0");
-        return;
-      }
-      try {
-        const result = await quoteWithdraw(amount);
-        setQuote(result);
-      } catch {
-        setQuote("0");
-      }
-    };
-    const timer = setTimeout(fetchQuote, 500);
-    return () => clearTimeout(timer);
-  }, [amount, quoteWithdraw]);
-
-  const handleSubmit = async () => {
-    if (!amount || Number.parseFloat(amount) <= 0) {
-      setError("Enter a valid amount");
-      return;
-    }
-    if (Number.parseFloat(amount) > Number.parseFloat(yoUsdBalance)) {
-      setError("Insufficient yoUSD balance");
-      return;
-    }
-    setError("");
-    try {
-      await withdraw(amount);
-      router.back();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Withdrawal failed");
-    }
-  };
-
-  const setPercentage = (pct: number) => {
-    const value = (Number.parseFloat(yoUsdBalance) * pct) / 100;
-    setAmount(value.toFixed(2));
-  };
-
-  const formattedBalance = Number.parseFloat(yoUsdBalance).toFixed(2);
-  const hasQuote = Number.parseFloat(quote) > 0;
+  const { form, quote, hasQuote, balance, isLoading, error, onSubmit, setPercentage } = useWithdrawScreen();
 
   return (
     <View className="flex-1 bg-background p-5">
@@ -79,7 +28,7 @@ export default function WithdrawScreen() {
           </View>
           <View className="flex-1">
             <Text className="text-muted-foreground text-xs">Your yoUSD Balance</Text>
-            <Text className="font-bold text-foreground text-lg">{formattedBalance}</Text>
+            <Text className="font-bold text-foreground text-lg">{balance}</Text>
           </View>
         </View>
       </View>
@@ -88,17 +37,30 @@ export default function WithdrawScreen() {
       <View className="mb-4">
         <Text className="mb-2 text-muted-foreground text-sm">Amount to withdraw</Text>
         <View className="flex-row items-center rounded-2xl border-2 border-blue-500/30 bg-card px-4 py-4">
-          <TextInput
-            className="flex-1 font-semibold text-2xl text-foreground"
-            keyboardType="decimal-pad"
-            onChangeText={setAmount}
-            placeholder="0.00"
-            placeholderTextColor="#9ca3af"
-            value={amount}
+          <Controller
+            control={form.control}
+            name="amount"
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                className="flex-1 font-semibold text-2xl text-foreground"
+                keyboardType="decimal-pad"
+                onChangeText={onChange}
+                placeholder="0.00"
+                placeholderTextColor="#9ca3af"
+                value={value}
+              />
+            )}
           />
           <Text className="text-muted-foreground">yoUSD</Text>
         </View>
       </View>
+      {/* Error */}
+      {error && (
+        <View className="mb-4 flex-row items-center gap-2 rounded-xl bg-destructive/10 p-3">
+          <Icon as={AlertTriangleIcon} className="text-destructive" size={16} />
+          <Text className="flex-1 text-destructive text-sm">{error}</Text>
+        </View>
+      )}
 
       {/* Percentage Buttons */}
       <View className="mb-5 flex-row gap-2">
@@ -117,7 +79,7 @@ export default function WithdrawScreen() {
       {hasQuote && (
         <View className="mb-4 rounded-xl bg-muted/50 p-4">
           <Text className="mb-1 text-muted-foreground text-xs">You'll receive (estimated)</Text>
-          <Text className="font-bold text-foreground text-xl">{Number.parseFloat(quote).toFixed(2)} USDC</Text>
+          <Text className="font-bold text-foreground text-xl">{quote} USDC</Text>
         </View>
       )}
 
@@ -129,22 +91,16 @@ export default function WithdrawScreen() {
         </Text>
       </View>
 
-      {/* Error */}
-      {error && (
-        <View className="mb-4 flex-row items-center gap-2 rounded-xl bg-destructive/10 p-3">
-          <Icon as={AlertTriangleIcon} className="text-destructive" size={16} />
-          <Text className="flex-1 text-destructive text-sm">{error}</Text>
-        </View>
-      )}
-
       {/* Submit Button */}
       <View className="mt-auto">
-        <Button className="w-full rounded-xl bg-blue-600 py-4" disabled={isLoading} onPress={handleSubmit}>
-          {isLoading ? (
-            <ActivityIndicator color="white" size="small" />
-          ) : (
-            <Text className="font-bold text-base text-white">Withdraw</Text>
-          )}
+        <Button
+          className="w-full rounded-xl bg-blue-600"
+          disabled={isLoading || !form.formState.isValid}
+          onPress={onSubmit}
+          size="lg"
+        >
+          {isLoading && <Icon as={LoaderIcon} className="animate-spin text-white" />}
+          <Text className="font-bold text-base text-white">Withdraw</Text>
         </Button>
       </View>
     </View>
