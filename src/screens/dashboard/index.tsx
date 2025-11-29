@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRouter } from "expo-router";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert } from "@/components/ui/alert";
@@ -7,26 +7,15 @@ import { useYoVault } from "@/lib/yo-protocol/hooks";
 import { AssetCard } from "./asset-card";
 import { BalanceHero } from "./balance-hero";
 import { QuickActions } from "./quick-actions";
-import { TransactionSheet } from "./transaction-sheet";
 
 type DashboardScreenProps = {
   chainId: string | number | undefined;
 };
 
 export default function DashboardScreen({ chainId }: DashboardScreenProps) {
-  const [activeSheet, setActiveSheet] = useState<"deposit" | "withdraw" | null>(null);
+  const router = useRouter();
 
-  const {
-    yoUsdBalance,
-    usdcBalance,
-    isLoading,
-    error,
-    deposit,
-    withdraw,
-    quoteDeposit,
-    quoteWithdraw,
-    refreshBalances,
-  } = useYoVault();
+  const { yoUsdBalance, usdcBalance, isLoading, error, refreshBalances } = useYoVault();
 
   const isCorrectNetwork = chainId === BASE_CHAIN_ID;
 
@@ -44,7 +33,7 @@ export default function DashboardScreen({ chainId }: DashboardScreenProps) {
         <BalanceHero isLoading={isLoading} yoUsdBalance={yoUsdBalance} />
 
         {/* Quick Actions */}
-        <QuickActions onDeposit={() => setActiveSheet("deposit")} onWithdraw={() => setActiveSheet("withdraw")} />
+        <QuickActions onDeposit={() => router.push("/deposit")} onWithdraw={() => router.push("/withdraw")} />
 
         {/* Error Display */}
         {error && (
@@ -58,27 +47,6 @@ export default function DashboardScreen({ chainId }: DashboardScreenProps) {
           <AssetCard isLoading={isLoading} usdcBalance={usdcBalance} yoUsdBalance={yoUsdBalance} />
         </View>
       </ScrollView>
-
-      {/* Transaction Sheets */}
-      <TransactionSheet
-        balance={usdcBalance}
-        isLoading={isLoading}
-        isOpen={activeSheet === "deposit"}
-        onClose={() => setActiveSheet(null)}
-        onQuote={quoteDeposit}
-        onSubmit={deposit}
-        type="deposit"
-      />
-
-      <TransactionSheet
-        balance={yoUsdBalance}
-        isLoading={isLoading}
-        isOpen={activeSheet === "withdraw"}
-        onClose={() => setActiveSheet(null)}
-        onQuote={quoteWithdraw}
-        onSubmit={withdraw}
-        type="withdraw"
-      />
     </SafeAreaView>
   );
 }

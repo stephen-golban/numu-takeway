@@ -13,7 +13,7 @@ export default function UnProtectedLayout() {
 
   return (
     <Stack screenOptions={header}>
-      <Stack.Screen name="index" />
+      <Stack.Screen name="index" options={{ title: "Welcome" }} />
     </Stack>
   );
 }
