@@ -1,9 +1,8 @@
-import { useAccount, useAppKit } from "@reown/appkit-react-native";
+import { AppKitButton, useAccount, useAppKit } from "@reown/appkit-react-native";
 import { Wallet } from "lucide-react-native";
 import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
-import { Text } from "@/components/ui/text";
 
 type WalletButtonProps = {
   variant?: "default" | "header";
@@ -36,16 +35,5 @@ export function WalletButton({ variant = "default" }: WalletButtonProps) {
     );
   }
 
-  return (
-    <Button
-      accessibilityHint="Tap to connect your crypto wallet"
-      accessibilityLabel="Connect wallet"
-      accessibilityRole="button"
-      className="flex-row items-center gap-2"
-      onPress={() => open()}
-    >
-      <Icon as={Wallet} className="text-primary-foreground" size={18} />
-      <Text>Connect Wallet</Text>
-    </Button>
-  );
+  return <AppKitButton />;
 }

@@ -1,6 +1,8 @@
 import type { Storage } from "@reown/appkit-react-native";
 import { safeJsonParse, safeJsonStringify } from "@walletconnect/safe-json";
-import { appKitStorage as mmkv } from "@/lib/storage";
+import { createMMKV } from "react-native-mmkv";
+
+const mmkv = createMMKV({ id: "appkit" });
 
 export const appKitStorage: Storage = {
   getKeys: async () => await Promise.resolve(mmkv.getAllKeys()),
