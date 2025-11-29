@@ -1,20 +1,36 @@
 import { useAccount, useAppKit } from "@reown/appkit-react-native";
-import { WalletIcon } from "lucide-react-native";
+import { usePathname, useRouter } from "expo-router";
+import { Settings2Icon, WalletIcon } from "lucide-react-native";
+import { Pressable } from "react-native";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Icon } from "./ui/icon";
 import { Text } from "./ui/text";
 
 export function ConnectButton() {
   const { open } = useAppKit();
-  const { address, isConnected } = useAccount();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { isConnected } = useAccount();
+
+  const onPressAvatar = () => {
+    if (pathname === "/settings") {
+      return;
+    }
+
+    return router.push("/settings");
+  };
 
   if (isConnected) {
     return (
-      <Button onPress={() => open({ view: "Account" })}>
-        <Text className="font-medium">
-          {address?.slice(0, 6)}...{address?.slice(-4)}
-        </Text>
-      </Button>
+      <Pressable onPress={onPressAvatar}>
+        <Avatar alt="Connected Wallet">
+          <AvatarImage src="" />
+          <AvatarFallback>
+            <Icon as={Settings2Icon} className="size-4 text-foreground" />
+          </AvatarFallback>
+        </Avatar>
+      </Pressable>
     );
   }
 

@@ -1,9 +1,10 @@
 import "@walletconnect/react-native-compat";
 import "../global.css";
 
+import { useAccount } from "@reown/appkit-react-native";
 import { SplashScreen, Stack } from "expo-router";
-import { useColorScheme } from "nativewind";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { useCustomColorScheme } from "@/lib/hooks/use-custom-color-scheme";
 import { THEME } from "@/lib/theme";
 import AppProviders from "@/providers";
 
@@ -12,18 +13,19 @@ SplashScreen.preventAutoHideAsync();
 export { ErrorBoundary } from "expo-router";
 
 export default function RootLayout() {
-  const { colorScheme } = useColorScheme();
-  const theme = colorScheme ?? "light";
+  const { colorScheme } = useCustomColorScheme();
 
   return (
-    <AppProviders theme={theme}>
-      <RootNavigator theme={theme} />
+    <AppProviders theme={colorScheme}>
+      <RootNavigator theme={colorScheme} />
     </AppProviders>
   );
 }
 
 function RootNavigator({ theme }: { theme: "light" | "dark" }) {
   const backgroundColor = THEME[theme].background;
+
+  const { isConnected } = useAccount();
 
   const onLayout = () => SplashScreen.hide();
 
@@ -35,9 +37,12 @@ function RootNavigator({ theme }: { theme: "light" | "dark" }) {
           contentStyle: { backgroundColor },
         }}
       >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="settings" options={{ headerShown: false }} />
-        <Stack.Screen name="vault" options={{ headerShown: false }} />
+        <Stack.Protected guard={isConnected}>
+          <Stack.Screen name="(protected)" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={!isConnected}>
+          <Stack.Screen name="(unprotected)" />
+        </Stack.Protected>
       </Stack>
     </Animated.View>
   );

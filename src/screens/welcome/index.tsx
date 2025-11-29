@@ -15,7 +15,7 @@ export default function WelcomeScreen() {
         <View className="mb-4 h-20 w-20 items-center justify-center rounded-2xl border-2 border-border border-dashed">
           <Text className="text-muted-foreground text-xs">Logo</Text>
         </View>
-        <Text className="mb-2 font-bold text-3xl text-foreground">YO Protocol</Text>
+        <Text className="mb-2 font-bold text-3xl text-foreground">Numu Takeaway</Text>
         <Text className="text-center text-lg text-muted-foreground">Earn optimized yield on your stablecoins</Text>
       </View>
 

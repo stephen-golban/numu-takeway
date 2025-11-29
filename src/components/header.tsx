@@ -30,6 +30,7 @@ export const createHeaderConfig = ({ title, isDark, isConnected, showNetworkBadg
   ({
     title,
     headerTransparent: true,
+    headerBackTitleStyle: { fontSize: 14 },
     headerBlurEffect: isDark ? undefined : "light",
     headerRight: () => createHeaderRight(isConnected),
     headerLeft: () => createHeaderLeft(isConnected, showNetworkBadge),

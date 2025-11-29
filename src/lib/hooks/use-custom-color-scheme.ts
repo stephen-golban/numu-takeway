@@ -5,7 +5,7 @@ export function useCustomColorScheme() {
   const isDark = colorScheme === "dark";
 
   return {
-    colorScheme: isDark ? "dark" : "light",
+    colorScheme: (isDark ? "dark" : "light") as "light" | "dark",
     isDark,
     ...rest,
   };

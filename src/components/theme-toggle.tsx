@@ -20,7 +20,7 @@ const ThemeToggle = () => {
       size="icon"
       variant="ghost"
     >
-      <Icon as={isDark ? MoonStarIcon : SunIcon} className="size-5 text-foreground" />
+      <Icon as={isDark ? MoonStarIcon : SunIcon} className="size-4 text-foreground" />
     </Button>
   );
 };
