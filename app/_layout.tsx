@@ -1,9 +1,9 @@
 import "@walletconnect/react-native-compat";
-import "@/global.css";
+import "../global.css";
 
-import { Slot, SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { View } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { THEME } from "@/lib/theme";
 import AppProviders from "@/providers";
 
@@ -28,15 +28,17 @@ function RootNavigator({ theme }: { theme: "light" | "dark" }) {
   const onLayout = () => SplashScreen.hide();
 
   return (
-    <View onLayout={onLayout} style={{ flex: 1, backgroundColor }}>
+    <Animated.View className="flex-1 bg-background" entering={FadeIn.duration(300)} onLayout={onLayout}>
       <Stack
         screenOptions={{
           headerShadowVisible: false,
           contentStyle: { backgroundColor },
         }}
       >
-        <Slot />
+        <Stack.Screen name="index" />
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="vault" options={{ headerShown: false }} />
       </Stack>
-    </View>
+    </Animated.View>
   );
 }

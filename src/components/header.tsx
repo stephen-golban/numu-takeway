@@ -5,14 +5,14 @@ import { ConnectButton } from "./connect-button";
 import { NetworkBadge } from "./network-badge";
 import { ThemeToggle } from "./theme-toggle";
 
-const createHeaderLeft = (isConnected: boolean, showNetworkBadge = false) => {
+export const createHeaderLeft = (isConnected: boolean, showNetworkBadge = false) => {
   if (showNetworkBadge) {
     return <NetworkBadge isConnected={isConnected} name="Base" />;
   }
   return;
 };
 
-const createHeaderRight = (isConnected: boolean) => (
+export const createHeaderRight = (isConnected: boolean) => (
   <View className="flex-row items-center gap-1">
     <ThemeToggle />
     {isConnected && <ConnectButton />}

@@ -1,6 +1,8 @@
 import { useAccount, useAppKit } from "@reown/appkit-react-native";
-import { Text } from "react-native";
+import { WalletIcon } from "lucide-react-native";
 import { Button } from "./ui/button";
+import { Icon } from "./ui/icon";
+import { Text } from "./ui/text";
 
 export function ConnectButton() {
   const { open } = useAppKit();
@@ -17,8 +19,9 @@ export function ConnectButton() {
   }
 
   return (
-    <Button onPress={() => open()}>
-      <Text className="text-center font-semibold text-lg">🔗 Connect Wallet</Text>
+    <Button className="rounded-full px-8" onPress={() => open({ view: "Connect" })} variant="default">
+      <Icon as={WalletIcon} className="text-primary-foreground" />
+      <Text>Connect Wallet</Text>
     </Button>
   );
 }
