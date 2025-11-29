@@ -12,14 +12,25 @@ export function useYoVault() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const getEthersProvider = useCallback(() => {
+    if (!provider) {
+      return null;
+    }
+    return new ethers.BrowserProvider(provider as ethers.Eip1193Provider);
+  }, [provider]);
+
   const refreshBalances = useCallback(async () => {
-    if (!(isConnected && address && provider)) {
+    if (!(isConnected && address)) {
+      return;
+    }
+
+    const ethersProvider = getEthersProvider();
+    if (!ethersProvider) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const ethersProvider = new ethers.BrowserProvider(provider);
       const service = new YoGatewayService(ethersProvider);
 
       const [yoUsd, usdc] = await Promise.all([service.getYoUsdBalance(address), service.getUsdcBalance(address)]);
@@ -32,25 +43,28 @@ export function useYoVault() {
     } finally {
       setIsLoading(false);
     }
-  }, [isConnected, address, provider]);
+  }, [isConnected, address, getEthersProvider]);
 
   const deposit = useCallback(
-    async (amount: string) => {
-      if (!(provider && address)) {
+    async (amount: string): Promise<void> => {
+      if (!address) {
         throw new Error("Wallet not connected");
+      }
+
+      const ethersProvider = getEthersProvider();
+      if (!ethersProvider) {
+        throw new Error("Provider not available");
       }
 
       setIsLoading(true);
       setError(null);
 
       try {
-        const ethersProvider = new ethers.BrowserProvider(provider);
         const signer = await ethersProvider.getSigner();
         const service = new YoGatewayService(ethersProvider);
 
-        const receipt = await service.deposit(signer, amount, address);
+        await service.deposit(signer, amount, address);
         await refreshBalances();
-        return receipt;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Deposit failed";
         setError(message);
@@ -59,26 +73,29 @@ export function useYoVault() {
         setIsLoading(false);
       }
     },
-    [provider, address, refreshBalances]
+    [address, getEthersProvider, refreshBalances]
   );
 
   const withdraw = useCallback(
-    async (shares: string) => {
-      if (!(provider && address)) {
+    async (shares: string): Promise<void> => {
+      if (!address) {
         throw new Error("Wallet not connected");
+      }
+
+      const ethersProvider = getEthersProvider();
+      if (!ethersProvider) {
+        throw new Error("Provider not available");
       }
 
       setIsLoading(true);
       setError(null);
 
       try {
-        const ethersProvider = new ethers.BrowserProvider(provider);
         const signer = await ethersProvider.getSigner();
         const service = new YoGatewayService(ethersProvider);
 
-        const receipt = await service.withdraw(signer, shares, address);
+        await service.withdraw(signer, shares, address);
         await refreshBalances();
-        return receipt;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Withdrawal failed";
         setError(message);
@@ -87,39 +104,49 @@ export function useYoVault() {
         setIsLoading(false);
       }
     },
-    [provider, address, refreshBalances]
+    [address, getEthersProvider, refreshBalances]
   );
 
   const quoteDeposit = useCallback(
-    async (amount: string) => {
-      if (!provider) {
+    async (amount: string): Promise<string> => {
+      const ethersProvider = getEthersProvider();
+      if (!ethersProvider) {
         return "0";
       }
-      const ethersProvider = new ethers.BrowserProvider(provider);
-      const service = new YoGatewayService(ethersProvider);
-      return await service.quoteDeposit(amount);
+
+      try {
+        const service = new YoGatewayService(ethersProvider);
+        return await service.quoteDeposit(amount);
+      } catch {
+        return "0";
+      }
     },
-    [provider]
+    [getEthersProvider]
   );
 
   const quoteWithdraw = useCallback(
-    async (shares: string) => {
-      if (!provider) {
+    async (shares: string): Promise<string> => {
+      const ethersProvider = getEthersProvider();
+      if (!ethersProvider) {
         return "0";
       }
-      const ethersProvider = new ethers.BrowserProvider(provider);
-      const service = new YoGatewayService(ethersProvider);
-      return await service.quoteWithdraw(shares);
+
+      try {
+        const service = new YoGatewayService(ethersProvider);
+        return await service.quoteWithdraw(shares);
+      } catch {
+        return "0";
+      }
     },
-    [provider]
+    [getEthersProvider]
   );
 
   // Auto-refresh on connect
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && address) {
       refreshBalances();
     }
-  }, [isConnected, refreshBalances]);
+  }, [isConnected, address, refreshBalances]);
 
   return {
     yoUsdBalance,

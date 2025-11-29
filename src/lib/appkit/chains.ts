@@ -1,7 +1,9 @@
 import type { AppKitNetwork } from "@reown/appkit-react-native";
 
+export const BASE_CHAIN_ID = 8453;
+
 export const base: AppKitNetwork = {
-  id: 8453,
+  id: BASE_CHAIN_ID,
   caipNetworkId: "eip155:8453", // CAIP-2 format: namespace:chainId
   chainNamespace: "eip155", // EVM chains use 'eip155'
   name: "Base",
