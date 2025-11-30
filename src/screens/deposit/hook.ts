@@ -4,12 +4,13 @@ import { useForm } from "react-hook-form";
 import { useYoVault } from "@/lib/yo-protocol/hooks";
 import { type DepositFormValues, depositDefaultValues, depositResolver } from "./schema";
 
+export const QUICK_AMOUNTS = ["25", "50", "100"] as const;
+
 export function useDepositScreen() {
   const router = useRouter();
   const { usdcBalance, deposit, quoteDeposit, isLoading } = useYoVault();
 
   const [quote, setQuote] = useState("0");
-  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
 
   const form = useForm<DepositFormValues>({
     resolver: depositResolver,
@@ -21,23 +22,16 @@ export function useDepositScreen() {
 
   // Debounced quote fetching
   useEffect(() => {
-    if (!amount || Number.parseFloat(amount) <= 0) {
-      setQuote("0");
-      setIsQuoteLoading(false);
-      return;
-    }
-
-    // Set loading immediately when amount changes
-    setIsQuoteLoading(true);
-
     const fetchQuote = async () => {
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        setQuote("0");
+        return;
+      }
       try {
         const result = await quoteDeposit(amount);
         setQuote(result);
       } catch {
         setQuote("0");
-      } finally {
-        setIsQuoteLoading(false);
       }
     };
 
@@ -78,7 +72,6 @@ export function useDepositScreen() {
     form,
     quote: formattedQuote,
     hasQuote,
-    isQuoteLoading,
     balance: formattedBalance,
     isLoading,
     error,

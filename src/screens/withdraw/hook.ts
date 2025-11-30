@@ -4,12 +4,13 @@ import { useForm } from "react-hook-form";
 import { useYoVault } from "@/lib/yo-protocol/hooks";
 import { type WithdrawFormValues, withdrawDefaultValues, withdrawResolver } from "./schema";
 
+export const PERCENTAGE_OPTIONS = [25, 50, 75, 100] as const;
+
 export function useWithdrawScreen() {
   const router = useRouter();
   const { yoUsdBalance, withdraw, quoteWithdraw, isLoading } = useYoVault();
 
   const [quote, setQuote] = useState("0");
-  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
 
   const form = useForm<WithdrawFormValues>({
     resolver: withdrawResolver,
@@ -21,23 +22,16 @@ export function useWithdrawScreen() {
 
   // Debounced quote fetching
   useEffect(() => {
-    if (!amount || Number.parseFloat(amount) <= 0) {
-      setQuote("0");
-      setIsQuoteLoading(false);
-      return;
-    }
-
-    // Set loading immediately when amount changes
-    setIsQuoteLoading(true);
-
     const fetchQuote = async () => {
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        setQuote("0");
+        return;
+      }
       try {
         const result = await quoteWithdraw(amount);
         setQuote(result);
       } catch {
         setQuote("0");
-      } finally {
-        setIsQuoteLoading(false);
       }
     };
 
@@ -79,7 +73,6 @@ export function useWithdrawScreen() {
     form,
     quote: formattedQuote,
     hasQuote,
-    isQuoteLoading,
     balance: formattedBalance,
     isLoading,
     error,
