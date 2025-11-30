@@ -9,9 +9,10 @@ import {
   GlobeIcon,
   LogOutIcon,
   NetworkIcon,
+  UserCircleIcon,
   WalletIcon,
 } from "lucide-react-native";
-import { Linking, Alert as RNAlert, ScrollView, View } from "react-native";
+import { Linking, Pressable, Alert as RNAlert, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert } from "@/components/ui/alert";
 import { Icon } from "@/components/ui/icon";
@@ -70,6 +71,17 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView className="flex-1">
       <ScrollView className="mt-16 flex-grow px-4" contentContainerStyle={{ paddingBottom: 32 }}>
+        {/* Profile Header */}
+        <View className="items-center py-6">
+          <View className="mb-3 h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+            <Icon as={UserCircleIcon} className="text-primary" size={48} />
+          </View>
+          <Text className="font-semibold text-foreground text-lg">My Wallet</Text>
+          <Pressable onPress={copyAddress}>
+            <Text className="text-center text-muted-foreground text-xs">{address ?? "Not connected"}</Text>
+          </Pressable>
+        </View>
+
         {/* Network Warning */}
         {!isCorrectNetwork && (
           <View className="mb-4">

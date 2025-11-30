@@ -6,17 +6,15 @@ import { Text } from "@/components/ui/text";
 
 type BalanceHeroProps = {
   yoUsdBalance: string;
+  apy: string | undefined;
   isLoading: boolean;
 };
 
-export function BalanceHero({ yoUsdBalance, isLoading }: BalanceHeroProps) {
+export function BalanceHero({ yoUsdBalance, apy, isLoading }: BalanceHeroProps) {
   const formattedBalance = Number.parseFloat(yoUsdBalance).toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-
-  // Placeholder APY - in production this would come from the protocol
-  const estimatedApy = "8.5";
 
   return (
     <View className="items-center py-8">
@@ -25,7 +23,7 @@ export function BalanceHero({ yoUsdBalance, isLoading }: BalanceHeroProps) {
 
       {/* Main Balance */}
       {isLoading ? (
-        <Skeleton className="mb-2 h-12 w-48" />
+        <Skeleton className="mb-1 h-12 w-48 rounded-lg" />
       ) : (
         <View className="mb-1 flex-row items-baseline">
           <Text className="font-bold text-5xl text-foreground">${formattedBalance}</Text>
@@ -39,10 +37,14 @@ export function BalanceHero({ yoUsdBalance, isLoading }: BalanceHeroProps) {
       </View>
 
       {/* APY Badge */}
-      <View className="flex-row items-center gap-1 rounded-full bg-green-500/10 px-3 py-1">
-        <Icon as={ArrowUpIcon} className="text-green-600" size={12} />
-        <Text className="font-medium text-green-600 text-sm">{estimatedApy}% APY</Text>
-      </View>
+      {isLoading ? (
+        <Skeleton className="h-7 w-24 rounded-full" />
+      ) : (
+        <View className="flex-row items-center gap-1 rounded-full bg-green-500/10 px-3 py-1">
+          <Icon as={ArrowUpIcon} className="text-green-600" size={12} />
+          <Text className="font-medium text-green-600 text-sm">{apy ?? "—"} APY</Text>
+        </View>
+      )}
     </View>
   );
 }

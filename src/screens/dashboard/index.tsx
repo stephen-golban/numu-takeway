@@ -1,9 +1,10 @@
 import { useRouter } from "expo-router";
+import { useCallback } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert } from "@/components/ui/alert";
 import { BASE_CHAIN_ID } from "@/lib/appkit/chains";
-import { useYoVaultBalances } from "@/lib/tanstack-query";
+import { useVaultApy, useYoVaultBalances } from "@/lib/tanstack-query";
 import { AssetCard } from "./asset-card";
 import { BalanceHero } from "./balance-hero";
 import { QuickActions } from "./quick-actions";
@@ -16,10 +17,20 @@ export default function DashboardScreen({ chainId }: DashboardScreenProps) {
   const router = useRouter();
 
   const balancesQuery = useYoVaultBalances();
+  const apyQuery = useVaultApy();
+
   const yoUsdBalance = balancesQuery.data?.yoUsd ?? "0";
   const usdcBalance = balancesQuery.data?.usdc ?? "0";
+  const apy = apyQuery.data?.apy;
 
+  const isLoading = balancesQuery.isLoading || apyQuery.isLoading;
+  const isRefetching = balancesQuery.isRefetching || apyQuery.isRefetching;
   const isCorrectNetwork = chainId === BASE_CHAIN_ID;
+
+  const handleRefresh = useCallback(() => {
+    balancesQuery.refetch();
+    apyQuery.refetch();
+  }, [balancesQuery, apyQuery]);
 
   return (
     <SafeAreaView className="flex-1">
@@ -29,15 +40,17 @@ export default function DashboardScreen({ chainId }: DashboardScreenProps) {
       <ScrollView
         className="mt-8 flex-grow"
         contentContainerStyle={{ paddingBottom: 32 }}
-        refreshControl={
-          <RefreshControl onRefresh={() => balancesQuery.refetch()} refreshing={balancesQuery.isLoading} />
-        }
+        refreshControl={<RefreshControl onRefresh={handleRefresh} refreshing={isRefetching} />}
       >
         {/* Balance Hero Section */}
-        <BalanceHero isLoading={balancesQuery.isLoading} yoUsdBalance={yoUsdBalance} />
+        <BalanceHero apy={apy} isLoading={isLoading} yoUsdBalance={yoUsdBalance} />
 
         {/* Quick Actions */}
-        <QuickActions onDeposit={() => router.push("/deposit")} onWithdraw={() => router.push("/withdraw")} />
+        <QuickActions
+          isLoading={isLoading}
+          onDeposit={() => router.push("/deposit")}
+          onWithdraw={() => router.push("/withdraw")}
+        />
 
         {/* Error Display */}
         {balancesQuery.error && (
@@ -48,7 +61,7 @@ export default function DashboardScreen({ chainId }: DashboardScreenProps) {
 
         {/* Assets Section */}
         <View className="pt-6">
-          <AssetCard isLoading={balancesQuery.isLoading} usdcBalance={usdcBalance} yoUsdBalance={yoUsdBalance} />
+          <AssetCard isLoading={isLoading} usdcBalance={usdcBalance} yoUsdBalance={yoUsdBalance} />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,12 +1,14 @@
 import { ArrowDownToLineIcon, ArrowUpFromLineIcon } from "lucide-react-native";
 import { Pressable, View } from "react-native";
 import { Icon } from "@/components/ui/icon";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 
 type QuickActionsProps = {
   onDeposit: () => void;
   onWithdraw: () => void;
+  isLoading?: boolean;
 };
 
 type ActionButtonProps = {
@@ -16,6 +18,27 @@ type ActionButtonProps = {
   onPress: () => void;
   variant: "deposit" | "withdraw";
 };
+
+function ActionButtonSkeleton({ variant }: { variant: "deposit" | "withdraw" }) {
+  const isDeposit = variant === "deposit";
+
+  return (
+    <View className="flex-1 items-center gap-2 rounded-lg border border-border bg-card p-3 shadow-sm">
+      {/* Icon Container */}
+      <View
+        className={cn("items-center justify-center rounded-full p-2", isDeposit ? "bg-green-500/10" : "bg-blue-500/10")}
+      >
+        <Skeleton className="h-5 w-5 rounded-full" />
+      </View>
+
+      {/* Label */}
+      <View className="items-center gap-1">
+        <Skeleton className="h-4 w-14 rounded" />
+        <Skeleton className="h-3 w-16 rounded" />
+      </View>
+    </View>
+  );
+}
 
 function ActionButton({ icon, label, description, onPress, variant }: ActionButtonProps) {
   const isDeposit = variant === "deposit";
@@ -56,7 +79,16 @@ function ActionButton({ icon, label, description, onPress, variant }: ActionButt
   );
 }
 
-export function QuickActions({ onDeposit, onWithdraw }: QuickActionsProps) {
+export function QuickActions({ onDeposit, onWithdraw, isLoading }: QuickActionsProps) {
+  if (isLoading) {
+    return (
+      <View className="flex-row gap-3 px-4">
+        <ActionButtonSkeleton variant="deposit" />
+        <ActionButtonSkeleton variant="withdraw" />
+      </View>
+    );
+  }
+
   return (
     <View className="flex-row gap-3 px-4">
       <ActionButton

@@ -7,7 +7,7 @@
     "ios": "expo run:ios --device",
     "start": "expo start -c --dev-client",
     "check": "bunx biome check --write",
-    "prebuild": "bun expo prebuild --clean --platform ios",
+    "prebuild": "bun expo prebuild --clean --platform all",
     "ruler:apply": "bunx @intellectronica/ruler@latest apply --local-only",
     "clean": "rm -rf .expo && rm -rf node_modules && rm bun.lock && bun install",
     "prepare": "husky"
