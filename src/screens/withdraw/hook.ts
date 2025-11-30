@@ -4,13 +4,12 @@ import { useForm } from "react-hook-form";
 import { useYoVault } from "@/lib/yo-protocol/hooks";
 import { type WithdrawFormValues, withdrawDefaultValues, withdrawResolver } from "./schema";
 
-export const PERCENTAGE_OPTIONS = [25, 50, 75, 100] as const;
-
 export function useWithdrawScreen() {
   const router = useRouter();
   const { yoUsdBalance, withdraw, quoteWithdraw, isLoading } = useYoVault();
 
   const [quote, setQuote] = useState("0");
+  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
 
   const form = useForm<WithdrawFormValues>({
     resolver: withdrawResolver,
@@ -20,23 +19,19 @@ export function useWithdrawScreen() {
 
   const amount = form.watch("amount");
 
-  // Debounced quote fetching
+  // Quote fetching
   useEffect(() => {
-    const fetchQuote = async () => {
-      if (!amount || Number.parseFloat(amount) <= 0) {
-        setQuote("0");
-        return;
-      }
-      try {
-        const result = await quoteWithdraw(amount);
-        setQuote(result);
-      } catch {
-        setQuote("0");
-      }
-    };
+    if (!amount || Number.parseFloat(amount) <= 0) {
+      setQuote("0");
+      setIsQuoteLoading(false);
+      return;
+    }
 
-    const timer = setTimeout(fetchQuote, 500);
-    return () => clearTimeout(timer);
+    setIsQuoteLoading(true);
+    quoteWithdraw(amount)
+      .then(setQuote)
+      .catch(() => setQuote("0"))
+      .finally(() => setIsQuoteLoading(false));
   }, [amount, quoteWithdraw]);
 
   const onSubmit = async (data: WithdrawFormValues) => {
@@ -59,9 +54,8 @@ export function useWithdrawScreen() {
     form.setValue("amount", value, { shouldValidate: true });
   };
 
-  const setPercentage = (pct: number) => {
-    const value = (Number.parseFloat(yoUsdBalance) * pct) / 100;
-    setAmount(value.toFixed(2));
+  const setMaxAmount = () => {
+    setAmount(yoUsdBalance);
   };
 
   const formattedBalance = Number.parseFloat(yoUsdBalance).toFixed(2);
@@ -70,14 +64,16 @@ export function useWithdrawScreen() {
   const error = form.formState.errors.amount?.message;
 
   return {
-    form,
+    control: form.control,
+    isValid: form.formState.isValid,
     quote: formattedQuote,
     hasQuote,
+    isQuoteLoading,
     balance: formattedBalance,
     isLoading,
     error,
     onSubmit: form.handleSubmit(onSubmit),
     setAmount,
-    setPercentage,
+    setMaxAmount,
   };
 }
