@@ -12,7 +12,6 @@ type AmountInputProps = {
   variant?: AmountInputVariant;
   balance?: string;
   balanceLabel?: string;
-  error?: string;
   onMaxPress: () => void;
   onAmountPress?: (amount: string) => void;
 };
@@ -45,7 +44,6 @@ export function AmountInput({
   variant = "deposit",
   balance,
   balanceLabel,
-  error,
   onMaxPress,
   onAmountPress,
 }: AmountInputProps) {
@@ -57,16 +55,15 @@ export function AmountInput({
     if (!currentAmount) {
       return false;
     }
-    // For both variants, check if amount matches exactly
     const amountStr = Number.parseFloat(currentAmount).toString();
     return amountStr === value.toString();
   };
 
   return (
-    <View className="mb-2">
-      {balance && (
-        <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-muted-foreground">{amountLabel}</Text>
+    <View className="gap-y-3">
+      <View className="flex-row items-center justify-between">
+        <Text className="text-muted-foreground">{amountLabel}</Text>
+        {balance !== undefined && (
           <View className="flex-row items-center gap-2">
             <Icon as={CoinsIcon} className="text-muted-foreground" size={14} />
             <Text className="text-muted-foreground text-sm">Balance: </Text>
@@ -74,9 +71,9 @@ export function AmountInput({
               {balance} {balanceLabel}
             </Text>
           </View>
-        </View>
-      )}
-      <View className={`mb-3 flex-row items-center rounded-2xl border-2 ${styles.border} bg-card px-5 py-5`}>
+        )}
+      </View>
+      <View className={`flex-row items-center rounded-2xl border-2 ${styles.border} bg-card px-5 py-5`}>
         <Controller
           control={control}
           name="amount"
@@ -91,33 +88,26 @@ export function AmountInput({
             />
           )}
         />
-        <Pressable className={`rounded-lg ${styles.maxButton} px-4 py-2`} onPress={onMaxPress}>
+        <Pressable className={cn("rounded-lg px-4 py-2", styles.maxButton)} onPress={onMaxPress}>
           <Text className={`font-semibold ${styles.maxText}`}>MAX</Text>
         </Pressable>
       </View>
 
-      {/* Error */}
-      {error && <Text className="mb-4 text-destructive">{error}</Text>}
-
       {/* Quick Amount Buttons */}
       {onAmountPress && (
-        <View className="mb-8 flex-row gap-3">
+        <View className="flex-row gap-x-3">
           {QUICK_AMOUNTS.map((value) => {
             const isActive = isButtonActive(value);
+            const buttonStyle = isActive ? styles.quickButtonActive : styles.quickButton;
+            const textStyle = isActive ? styles.quickTextActive : styles.quickText;
+
             return (
               <Pressable
-                className={cn(
-                  "flex-1 items-center rounded-xl border py-4",
-                  isActive ? styles.quickButtonActive : styles.quickButton
-                )}
+                className={cn("flex-1 items-center rounded-xl border py-4", buttonStyle)}
                 key={value}
-                onPress={() => {
-                  onAmountPress(value.toString());
-                }}
+                onPress={() => onAmountPress(value.toString())}
               >
-                <Text className={cn("font-medium text-base", isActive ? styles.quickTextActive : styles.quickText)}>
-                  ${value}
-                </Text>
+                <Text className={cn("font-medium text-base", textStyle)}>${value}</Text>
               </Pressable>
             );
           })}

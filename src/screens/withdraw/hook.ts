@@ -21,13 +21,16 @@ export function useWithdrawScreen() {
 
   // Debounced quote fetching
   useEffect(() => {
+    if (!amount || Number.parseFloat(amount) <= 0) {
+      setQuote("0");
+      setIsQuoteLoading(false);
+      return;
+    }
+
+    // Set loading immediately when amount changes
+    setIsQuoteLoading(true);
+
     const fetchQuote = async () => {
-      if (!amount || Number.parseFloat(amount) <= 0) {
-        setQuote("0");
-        setIsQuoteLoading(false);
-        return;
-      }
-      setIsQuoteLoading(true);
       try {
         const result = await quoteWithdraw(amount);
         setQuote(result);

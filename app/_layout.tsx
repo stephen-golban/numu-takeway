@@ -3,7 +3,10 @@ import "../global.css";
 
 import { useAccount } from "@reown/appkit-react-native";
 import { SplashScreen, Stack } from "expo-router";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { configureReanimatedLogger, FadeIn, ReanimatedLogLevel } from "react-native-reanimated";
+
+configureReanimatedLogger({ level: ReanimatedLogLevel.warn, strict: false });
+
 import { useCustomColorScheme } from "@/lib/hooks/use-custom-color-scheme";
 import { THEME } from "@/lib/theme";
 import AppProviders from "@/providers";

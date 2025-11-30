@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { cn } from "@/lib/utils";
 
 type SubmitButtonVariant = "deposit" | "withdraw";
 
@@ -40,8 +39,9 @@ export function SubmitButton({ variant = "deposit", isLoading, isValid, onPress 
       >
         <Icon
           as={isLoading ? LoaderIcon : styles.icon}
-          className={cn(isLoading && "animate-spin")}
+          className={isLoading ? "animate-spin" : "animate-none"}
           color="white"
+          key={isLoading ? "loader" : "icon"}
           size={22}
         />
         <Text className="font-bold text-lg text-white">{styles.label}</Text>
