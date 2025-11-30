@@ -1,18 +1,21 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useBiometricAuth } from "@/providers/biometric-auth";
 
 export default function useLockScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { authenticate, biometricType, isLoading, unlock } = useBiometricAuth();
 
-  const handleAuthenticate = async () => {
+  const handleAuthenticate = useCallback(async () => {
     setIsAuthenticating(true);
-    const success = await authenticate();
-    if (success) {
-      unlock();
+    try {
+      const success = await authenticate();
+      if (success) {
+        unlock();
+      }
+    } finally {
+      setIsAuthenticating(false);
     }
-    setIsAuthenticating(false);
-  };
+  }, [authenticate, unlock]);
 
   return {
     handleAuthenticate,

@@ -21,8 +21,25 @@ import { Icon } from "@/components/ui/icon";
 import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import { BASE_CHAIN_ID } from "@/lib/appkit/chains";
-import { useBiometricAuth } from "@/providers/biometric-auth";
+import { type BiometricType, getBiometricLabel, useBiometricAuth } from "@/providers/biometric-auth";
 import { MenuDivider, MenuItem, MenuSection } from "./menu-item";
+
+const NETWORK_NAMES: Record<number, string> = {
+  8453: "Base",
+  1: "Ethereum",
+};
+
+const getNetworkName = (chainId: string | number | undefined): string => {
+  if (chainId === undefined) {
+    return "Unknown";
+  }
+  const numericChainId = typeof chainId === "string" ? Number.parseInt(chainId, 10) : chainId;
+  return NETWORK_NAMES[numericChainId] ?? "Unknown";
+};
+
+const getBiometricIcon = (type: BiometricType) => (type === "faceId" ? ScanFaceIcon : FingerprintIcon);
+
+const truncateAddress = (address: string): string => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -66,17 +83,9 @@ export default function SettingsScreen() {
     }
   };
 
-  const getNetworkName = (id: string | number | undefined): string => {
-    if (id === 8453 || id === "8453") {
-      return "Base";
-    }
-    if (id === 1 || id === "1") {
-      return "Ethereum";
-    }
-    return "Unknown";
-  };
-
-  const truncatedAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Not connected";
+  const truncatedAddress = address ? truncateAddress(address) : "Not connected";
+  const biometricLabel = getBiometricLabel(biometricType);
+  const BiometricIcon = getBiometricIcon(biometricType);
 
   const appVersion = Application.nativeApplicationVersion ?? "1.0.0";
 
@@ -152,12 +161,12 @@ export default function SettingsScreen() {
         {isAvailable && (
           <MenuSection title="Security">
             <MenuItem
-              icon={biometricType === "faceId" ? ScanFaceIcon : FingerprintIcon}
-              label={biometricType === "faceId" ? "Face ID" : "Touch ID"}
+              icon={BiometricIcon}
+              label={biometricLabel}
               onPress={handleBiometricToggle}
               rightElement={
                 <Switch
-                  accessibilityLabel={`${isEnabled ? "Disable" : "Enable"} biometric authentication`}
+                  accessibilityLabel={`${isEnabled ? "Disable" : "Enable"} ${biometricLabel}`}
                   checked={isEnabled}
                   disabled={isLoading}
                   onCheckedChange={handleBiometricToggle}

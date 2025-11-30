@@ -12,14 +12,42 @@ export const getBiometricEnabled = (): boolean => storage.getBoolean(BIOMETRIC_E
 
 export const setBiometricEnabled = (enabled: boolean): void => storage.set(BIOMETRIC_ENABLED_KEY, enabled);
 
-type BiometricType = "fingerprint" | "faceId" | "iris" | null;
+export type BiometricType = "fingerprint" | "faceId" | "iris" | null;
+
+const BIOMETRIC_TYPE_VALUES = ["fingerprint", "faceId", "iris"] as const;
+
+const isBiometricType = (value: unknown): value is BiometricType =>
+  typeof value === "string" && BIOMETRIC_TYPE_VALUES.includes(value as (typeof BIOMETRIC_TYPE_VALUES)[number]);
 
 const getCachedBiometricType = (): BiometricType => {
   const cached = storage.getString(BIOMETRIC_TYPE_KEY);
-  if (cached === "fingerprint" || cached === "faceId" || cached === "iris") {
-    return cached;
+  return isBiometricType(cached) ? cached : null;
+};
+
+const detectBiometricType = (supportedTypes: LocalAuthentication.AuthenticationType[]): BiometricType => {
+  if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
+    return "faceId";
+  }
+  if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
+    return "fingerprint";
+  }
+  if (supportedTypes.includes(LocalAuthentication.AuthenticationType.IRIS)) {
+    return "iris";
   }
   return null;
+};
+
+export const getBiometricLabel = (type: BiometricType): string => {
+  switch (type) {
+    case "faceId":
+      return "Face ID";
+    case "fingerprint":
+      return "Touch ID";
+    case "iris":
+      return "Iris";
+    default:
+      return "Biometric";
+  }
 };
 
 const setCachedBiometricType = (type: BiometricType): void => {
@@ -62,20 +90,15 @@ export function BiometricAuthProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     async function checkBiometricAvailability() {
       try {
-        const hasHardware = await LocalAuthentication.hasHardwareAsync();
-        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-        const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
+        const [hasHardware, isEnrolled, supportedTypes] = await Promise.all([
+          LocalAuthentication.hasHardwareAsync(),
+          LocalAuthentication.isEnrolledAsync(),
+          LocalAuthentication.supportedAuthenticationTypesAsync(),
+        ]);
 
-        let type: BiometricType = null;
-        if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
-          type = "faceId";
-        } else if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
-          type = "fingerprint";
-        } else if (supportedTypes.includes(LocalAuthentication.AuthenticationType.IRIS)) {
-          type = "iris";
-        }
-
+        const type = detectBiometricType(supportedTypes);
         const available = hasHardware && isEnrolled;
+
         setIsAvailable(available);
         setBiometricType(type);
         setCachedBiometricType(type);
