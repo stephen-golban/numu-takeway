@@ -6,11 +6,9 @@ import {
   CircleIcon,
   CopyIcon,
   ExternalLinkIcon,
-  FingerprintIcon,
   GlobeIcon,
   LogOutIcon,
   NetworkIcon,
-  ScanFaceIcon,
   UserCircleIcon,
   WalletIcon,
 } from "lucide-react-native";
@@ -21,7 +19,7 @@ import { Icon } from "@/components/ui/icon";
 import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import { BASE_CHAIN_ID } from "@/lib/appkit/chains";
-import { type BiometricType, getBiometricLabel, useBiometricAuth } from "@/providers/biometric-auth";
+import { getBiometricIcon, getBiometricLabel, useBiometricAuth } from "@/providers/biometric-auth";
 import { MenuDivider, MenuItem, MenuSection } from "./menu-item";
 
 const NETWORK_NAMES: Record<number, string> = {
@@ -36,8 +34,6 @@ const getNetworkName = (chainId: string | number | undefined): string => {
   const numericChainId = typeof chainId === "string" ? Number.parseInt(chainId, 10) : chainId;
   return NETWORK_NAMES[numericChainId] ?? "Unknown";
 };
-
-const getBiometricIcon = (type: BiometricType) => (type === "faceId" ? ScanFaceIcon : FingerprintIcon);
 
 const truncateAddress = (address: string): string => `${address.slice(0, 6)}...${address.slice(-4)}`;
 

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-export const depositSchema = z.object({
+export const amountSchema = z.object({
   amount: z
     .string()
     .min(1, "Enter an amount")
@@ -9,10 +9,10 @@ export const depositSchema = z.object({
     .refine((val) => Number.parseFloat(val) > 0, "Amount must be greater than 0"),
 });
 
-export type DepositFormValues = z.infer<typeof depositSchema>;
+export type AmountFormValues = z.infer<typeof amountSchema>;
 
-export const depositResolver = zodResolver(depositSchema);
+export const amountResolver = zodResolver(amountSchema);
 
-export const depositDefaultValues: DepositFormValues = {
+export const amountDefaultValues: AmountFormValues = {
   amount: "",
 };

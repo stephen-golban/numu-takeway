@@ -1,4 +1,4 @@
-import { FingerprintIcon, LoaderIcon, LockIcon, ScanFaceIcon } from "lucide-react-native";
+import { LoaderIcon, LockIcon } from "lucide-react-native";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
@@ -6,10 +6,8 @@ import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
-import { type BiometricType, getBiometricLabel } from "@/providers/biometric-auth";
+import { getBiometricIcon, getBiometricLabel } from "@/providers/biometric-auth";
 import useLockScreen from "@/screens/lock/hook";
-
-const getBiometricIcon = (type: BiometricType) => (type === "faceId" ? ScanFaceIcon : FingerprintIcon);
 
 export default function LockScreen() {
   const { handleAuthenticate, biometricType, isLoading, isAuthenticating } = useLockScreen();

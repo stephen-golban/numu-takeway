@@ -1,4 +1,5 @@
 import * as LocalAuthentication from "expo-local-authentication";
+import { FingerprintIcon, ScanFaceIcon } from "lucide-react-native";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { createMMKV } from "react-native-mmkv";
 
@@ -49,6 +50,8 @@ export const getBiometricLabel = (type: BiometricType): string => {
       return "Biometric";
   }
 };
+
+export const getBiometricIcon = (type: BiometricType) => (type === "faceId" ? ScanFaceIcon : FingerprintIcon);
 
 const setCachedBiometricType = (type: BiometricType): void => {
   if (type) {
