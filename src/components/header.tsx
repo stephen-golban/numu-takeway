@@ -26,14 +26,18 @@ type HeaderConfigProps = {
   showNetworkBadge?: boolean;
 };
 
-export const createHeaderConfig = ({ title, isDark, isConnected, showNetworkBadge = false }: HeaderConfigProps) =>
-  ({
+export const createHeaderConfig = ({ title, isDark, isConnected, showNetworkBadge = false }: HeaderConfigProps) => {
+  const left = createHeaderLeft(isConnected, showNetworkBadge);
+
+  return {
     title,
     headerTransparent: true,
     headerTitleStyle: { fontSize: 22 },
     headerBackTitleStyle: { fontSize: 14 },
     headerBlurEffect: isDark ? undefined : "light",
     headerRight: () => createHeaderRight(isConnected),
-    headerLeft: () => createHeaderLeft(isConnected, showNetworkBadge),
+    ...(left && { headerLeft: () => left }), // ⬅️ only if exists
     headerStyle: isDark ? { backgroundColor: NAV_THEME.dark.colors.background } : undefined,
-  }) as ExtendedStackNavigationOptions;
+    headerTitleAlign: "center", // optional, to enforce symmetry
+  } as ExtendedStackNavigationOptions;
+};

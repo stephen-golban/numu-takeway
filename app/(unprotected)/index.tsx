@@ -7,7 +7,7 @@ export default function HomeScreen() {
   const { isConnected, chainId } = useAccount();
 
   if (isConnected && chainId === BASE_CHAIN_ID) {
-    return <Redirect href="/vault" />;
+    return <Redirect href="/(protected)/dashboard" />;
   }
 
   return <WelcomeScreen />;

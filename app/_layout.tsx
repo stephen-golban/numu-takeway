@@ -44,7 +44,7 @@ function RootNavigator({ theme }: { theme: "light" | "dark" }) {
           <Stack.Screen name="(protected)" options={{ headerShown: false }} />
         </Stack.Protected>
         <Stack.Protected guard={!isConnected}>
-          <Stack.Screen name="(unprotected)" />
+          <Stack.Screen name="(unprotected)" options={{ headerShown: false }} />
         </Stack.Protected>
       </Stack>
     </Animated.View>

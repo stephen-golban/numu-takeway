@@ -38,7 +38,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.numutakeaway"
     },
     "plugins": ["expo-router", "expo-secure-store"],
     "experiments": {
