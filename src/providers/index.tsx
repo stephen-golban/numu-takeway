@@ -3,6 +3,7 @@ import { AppKit, AppKitProvider } from "@reown/appkit-react-native";
 import { PortalHost } from "@rn-primitives/portal";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
 import { appKit } from "@/lib/appkit";
 import { NAV_THEME } from "@/lib/theme";
@@ -16,16 +17,18 @@ const AppProviders: React.FC<AppProvidersProps> = ({ children, theme }) => {
 
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <AppKitProvider instance={appKit}>
-        <ThemeProvider value={NAV_THEME[theme]}>
-          <StatusBar style={statusBarStyle} />
-          {children}
-          <PortalHost />
-          <View pointerEvents="box-none" style={{ position: "absolute", height: "100%", width: "100%" }}>
-            <AppKit />
-          </View>
-        </ThemeProvider>
-      </AppKitProvider>
+      <KeyboardProvider>
+        <AppKitProvider instance={appKit}>
+          <ThemeProvider value={NAV_THEME[theme]}>
+            <StatusBar style={statusBarStyle} />
+            {children}
+            <PortalHost />
+            <View pointerEvents="box-none" style={{ position: "absolute", height: "100%", width: "100%" }}>
+              <AppKit />
+            </View>
+          </ThemeProvider>
+        </AppKitProvider>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 };
