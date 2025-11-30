@@ -9,6 +9,8 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 import { appKit } from "@/lib/appkit";
 import { queryClient } from "@/lib/tanstack-query";
 import { NAV_THEME } from "@/lib/theme";
+import AppActivityProvider from "./app-activity";
+import { BiometricAuthProvider } from "./biometric-auth";
 
 type AppProvidersProps = React.PropsWithChildren<{
   theme: "light" | "dark";
@@ -18,22 +20,26 @@ const AppProviders: React.FC<AppProvidersProps> = ({ children, theme }) => {
   const statusBarStyle = theme === "dark" ? "light" : "dark";
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <KeyboardProvider>
-          <AppKitProvider instance={appKit}>
-            <ThemeProvider value={NAV_THEME[theme]}>
-              <StatusBar style={statusBarStyle} />
-              {children}
-              <PortalHost />
-              <View pointerEvents="box-none" style={{ position: "absolute", height: "100%", width: "100%" }}>
-                <AppKit />
-              </View>
-            </ThemeProvider>
-          </AppKitProvider>
-        </KeyboardProvider>
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <BiometricAuthProvider>
+      <AppActivityProvider>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <KeyboardProvider>
+              <AppKitProvider instance={appKit}>
+                <ThemeProvider value={NAV_THEME[theme]}>
+                  <StatusBar style={statusBarStyle} />
+                  {children}
+                  <PortalHost />
+                  <View pointerEvents="box-none" style={{ position: "absolute", height: "100%", width: "100%" }}>
+                    <AppKit />
+                  </View>
+                </ThemeProvider>
+              </AppKitProvider>
+            </KeyboardProvider>
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </AppActivityProvider>
+    </BiometricAuthProvider>
   );
 };
 

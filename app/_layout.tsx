@@ -4,12 +4,12 @@ import "../global.css";
 import { useAccount } from "@reown/appkit-react-native";
 import { SplashScreen, Stack } from "expo-router";
 import Animated, { configureReanimatedLogger, FadeIn, ReanimatedLogLevel } from "react-native-reanimated";
-
-configureReanimatedLogger({ level: ReanimatedLogLevel.warn, strict: false });
-
 import { useCustomColorScheme } from "@/lib/hooks/use-custom-color-scheme";
 import { THEME } from "@/lib/theme";
 import AppProviders from "@/providers";
+import { useBiometricAuth } from "@/providers/biometric-auth";
+
+configureReanimatedLogger({ level: ReanimatedLogLevel.warn, strict: false });
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,8 +27,8 @@ export default function RootLayout() {
 
 function RootNavigator({ theme }: { theme: "light" | "dark" }) {
   const backgroundColor = THEME[theme].background;
-
   const { isConnected } = useAccount();
+  const { isLocked } = useBiometricAuth();
 
   const onLayout = () => SplashScreen.hide();
 
@@ -40,11 +40,16 @@ function RootNavigator({ theme }: { theme: "light" | "dark" }) {
           contentStyle: { backgroundColor },
         }}
       >
-        <Stack.Protected guard={isConnected}>
-          <Stack.Screen name="(protected)" options={{ headerShown: false }} />
+        <Stack.Protected guard={!(isConnected || isLocked)}>
+          <Stack.Screen name="index" />
         </Stack.Protected>
-        <Stack.Protected guard={!isConnected}>
-          <Stack.Screen name="(unprotected)" options={{ headerShown: false }} />
+
+        <Stack.Protected guard={isLocked}>
+          <Stack.Screen name="(modal)/lock" options={{ headerShown: false, animation: "fade" }} />
+        </Stack.Protected>
+
+        <Stack.Protected guard={isConnected && !isLocked}>
+          <Stack.Screen name="(protected)" options={{ headerShown: false }} />
         </Stack.Protected>
       </Stack>
     </Animated.View>

@@ -19,7 +19,11 @@ export function BalanceHero({ yoUsdBalance, apy, isLoading }: BalanceHeroProps) 
   return (
     <View className="items-center py-8">
       {/* Label */}
-      <Text className="mb-2 text-muted-foreground text-sm">Total Balance</Text>
+      {isLoading ? (
+        <Skeleton className="mb-2 h-4 w-24 rounded" />
+      ) : (
+        <Text className="mb-2 text-muted-foreground text-sm">Total Balance</Text>
+      )}
 
       {/* Main Balance */}
       {isLoading ? (
@@ -31,10 +35,14 @@ export function BalanceHero({ yoUsdBalance, apy, isLoading }: BalanceHeroProps) 
       )}
 
       {/* yoUSD Label */}
-      <View className="mb-4 flex-row items-center gap-1">
-        <View className="h-2 w-2 rounded-full bg-primary" />
-        <Text className="text-muted-foreground text-sm">yoUSD</Text>
-      </View>
+      {isLoading ? (
+        <Skeleton className="mb-4 h-4 w-16 rounded" />
+      ) : (
+        <View className="mb-4 flex-row items-center gap-1">
+          <View className="h-2 w-2 rounded-full bg-primary" />
+          <Text className="text-muted-foreground text-sm">yoUSD</Text>
+        </View>
+      )}
 
       {/* APY Badge */}
       {isLoading ? (

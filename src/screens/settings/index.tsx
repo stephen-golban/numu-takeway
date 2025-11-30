@@ -6,9 +6,11 @@ import {
   CircleIcon,
   CopyIcon,
   ExternalLinkIcon,
+  FingerprintIcon,
   GlobeIcon,
   LogOutIcon,
   NetworkIcon,
+  ScanFaceIcon,
   UserCircleIcon,
   WalletIcon,
 } from "lucide-react-native";
@@ -16,16 +18,26 @@ import { Linking, Pressable, Alert as RNAlert, ScrollView, View } from "react-na
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert } from "@/components/ui/alert";
 import { Icon } from "@/components/ui/icon";
+import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import { BASE_CHAIN_ID } from "@/lib/appkit/chains";
+import { useBiometricAuth } from "@/providers/biometric-auth";
 import { MenuDivider, MenuItem, MenuSection } from "./menu-item";
 
 export default function SettingsScreen() {
   const router = useRouter();
   const { address, chainId } = useAccount();
   const { open, disconnect } = useAppKit();
+  const { isAvailable, isEnabled, biometricType, toggleBiometric, isLoading } = useBiometricAuth();
 
   const isCorrectNetwork = chainId === BASE_CHAIN_ID;
+
+  const handleBiometricToggle = async () => {
+    const success = await toggleBiometric();
+    if (!(success || isEnabled)) {
+      RNAlert.alert("Authentication Failed", "Could not enable biometric authentication. Please try again.");
+    }
+  };
 
   const handleDisconnect = () => {
     RNAlert.alert("Disconnect Wallet", "Are you sure you want to disconnect your wallet?", [
@@ -135,6 +147,27 @@ export default function SettingsScreen() {
             </>
           )}
         </MenuSection>
+
+        {/* Security Section */}
+        {isAvailable && (
+          <MenuSection title="Security">
+            <MenuItem
+              icon={biometricType === "faceId" ? ScanFaceIcon : FingerprintIcon}
+              label={biometricType === "faceId" ? "Face ID" : "Touch ID"}
+              onPress={handleBiometricToggle}
+              rightElement={
+                <Switch
+                  accessibilityLabel={`${isEnabled ? "Disable" : "Enable"} biometric authentication`}
+                  checked={isEnabled}
+                  disabled={isLoading}
+                  onCheckedChange={handleBiometricToggle}
+                />
+              }
+              showChevron={false}
+              value="Require authentication to unlock the app"
+            />
+          </MenuSection>
+        )}
 
         {/* Actions Section */}
         <MenuSection title="Account">
