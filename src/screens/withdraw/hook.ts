@@ -1,15 +1,12 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useYoVault } from "@/lib/yo-protocol/hooks";
+import { useQuoteWithdraw, useWithdraw, useYoVaultBalances } from "@/lib/tanstack-query";
 import { type WithdrawFormValues, withdrawDefaultValues, withdrawResolver } from "./schema";
 
 export function useWithdrawScreen() {
   const router = useRouter();
-  const { yoUsdBalance, withdraw, quoteWithdraw, isLoading } = useYoVault();
-
-  const [quote, setQuote] = useState("0");
-  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
+  const { data: balances } = useYoVaultBalances();
+  const withdrawMutation = useWithdraw();
 
   const form = useForm<WithdrawFormValues>({
     resolver: withdrawResolver,
@@ -18,21 +15,9 @@ export function useWithdrawScreen() {
   });
 
   const amount = form.watch("amount");
+  const quoteQuery = useQuoteWithdraw(amount);
 
-  // Quote fetching
-  useEffect(() => {
-    if (!amount || Number.parseFloat(amount) <= 0) {
-      setQuote("0");
-      setIsQuoteLoading(false);
-      return;
-    }
-
-    setIsQuoteLoading(true);
-    quoteWithdraw(amount)
-      .then(setQuote)
-      .catch(() => setQuote("0"))
-      .finally(() => setIsQuoteLoading(false));
-  }, [amount, quoteWithdraw]);
+  const yoUsdBalance = balances?.yoUsd ?? "0";
 
   const onSubmit = async (data: WithdrawFormValues) => {
     if (Number.parseFloat(data.amount) > Number.parseFloat(yoUsdBalance)) {
@@ -41,7 +26,7 @@ export function useWithdrawScreen() {
     }
 
     try {
-      await withdraw(data.amount);
+      await withdrawMutation.mutateAsync(data.amount);
       router.back();
     } catch (err) {
       form.setError("amount", {
@@ -58,6 +43,7 @@ export function useWithdrawScreen() {
     setAmount(yoUsdBalance);
   };
 
+  const quote = quoteQuery.data ?? "0";
   const formattedBalance = Number.parseFloat(yoUsdBalance).toFixed(2);
   const formattedQuote = Number.parseFloat(quote).toFixed(2);
   const hasQuote = Number.parseFloat(quote) > 0;
@@ -68,9 +54,9 @@ export function useWithdrawScreen() {
     isValid: form.formState.isValid,
     quote: formattedQuote,
     hasQuote,
-    isQuoteLoading,
+    isQuoteLoading: quoteQuery.isFetching,
     balance: formattedBalance,
-    isLoading,
+    isLoading: withdrawMutation.isPending,
     error,
     onSubmit: form.handleSubmit(onSubmit),
     setAmount,

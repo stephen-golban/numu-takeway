@@ -1,15 +1,12 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useYoVault } from "@/lib/yo-protocol/hooks";
+import { useDeposit, useQuoteDeposit, useYoVaultBalances } from "@/lib/tanstack-query";
 import { type DepositFormValues, depositDefaultValues, depositResolver } from "./schema";
 
 export function useDepositScreen() {
   const router = useRouter();
-  const { usdcBalance, deposit, quoteDeposit, isLoading } = useYoVault();
-
-  const [quote, setQuote] = useState("0");
-  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
+  const { data: balances } = useYoVaultBalances();
+  const depositMutation = useDeposit();
 
   const form = useForm<DepositFormValues>({
     resolver: depositResolver,
@@ -18,21 +15,9 @@ export function useDepositScreen() {
   });
 
   const amount = form.watch("amount");
+  const quoteQuery = useQuoteDeposit(amount);
 
-  // Quote fetching
-  useEffect(() => {
-    if (!amount || Number.parseFloat(amount) <= 0) {
-      setQuote("0");
-      setIsQuoteLoading(false);
-      return;
-    }
-
-    setIsQuoteLoading(true);
-    quoteDeposit(amount)
-      .then(setQuote)
-      .catch(() => setQuote("0"))
-      .finally(() => setIsQuoteLoading(false));
-  }, [amount, quoteDeposit]);
+  const usdcBalance = balances?.usdc ?? "0";
 
   const onSubmit = async (data: DepositFormValues) => {
     if (Number.parseFloat(data.amount) > Number.parseFloat(usdcBalance)) {
@@ -41,7 +26,7 @@ export function useDepositScreen() {
     }
 
     try {
-      await deposit(data.amount);
+      await depositMutation.mutateAsync(data.amount);
       router.back();
     } catch (err) {
       form.setError("amount", {
@@ -58,6 +43,7 @@ export function useDepositScreen() {
     setAmount(usdcBalance);
   };
 
+  const quote = quoteQuery.data ?? "0";
   const formattedBalance = Number.parseFloat(usdcBalance).toFixed(2);
   const formattedQuote = Number.parseFloat(quote).toFixed(2);
   const hasQuote = Number.parseFloat(quote) > 0;
@@ -68,9 +54,9 @@ export function useDepositScreen() {
     isValid: form.formState.isValid,
     quote: formattedQuote,
     hasQuote,
-    isQuoteLoading,
+    isQuoteLoading: quoteQuery.isFetching,
     balance: formattedBalance,
-    isLoading,
+    isLoading: depositMutation.isPending,
     error,
     onSubmit: form.handleSubmit(onSubmit),
     setAmount,
