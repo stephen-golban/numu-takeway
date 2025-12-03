@@ -29,7 +29,7 @@ export const appKit = createAppKit({
   },
   features: {
     swaps: false,
-    onramp: false,
+    onramp: true,
     socials: false,
   },
 });

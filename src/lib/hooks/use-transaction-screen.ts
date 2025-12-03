@@ -4,6 +4,28 @@ import type { Control } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { type AmountFormValues, amountDefaultValues, amountResolver } from "@/lib/schemas/amount";
 
+/**
+ * Formats a number for display, handling very small values properly.
+ * For values >= 0.01, uses 2 decimal places.
+ * For smaller values, shows up to 6 significant digits.
+ */
+function formatAmount(value: string): string {
+  const num = Number.parseFloat(value);
+  if (Number.isNaN(num) || num === 0) {
+    return "0.00";
+  }
+
+  if (num >= 0.01) {
+    return num.toFixed(2);
+  }
+
+  // For small numbers, show up to 6 decimal places but trim trailing zeros
+  return num.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 6,
+  });
+}
+
 type TransactionConfig = {
   balance: string;
   insufficientBalanceMessage: string;
@@ -69,8 +91,8 @@ export function useTransactionLogic(
   };
 
   const quote = quoteQuery.data ?? "0";
-  const formattedBalance = Number.parseFloat(balance).toFixed(2);
-  const formattedQuote = Number.parseFloat(quote).toFixed(2);
+  const formattedBalance = formatAmount(balance);
+  const formattedQuote = formatAmount(quote);
   const hasQuote = Number.parseFloat(quote) > 0;
   const error = form.formState.errors.amount?.message;
 

@@ -5,15 +5,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 
 type BalanceHeroProps = {
-  yoUsdBalance: string;
+  yoEthBalance: string;
   apy: string | undefined;
   isLoading: boolean;
 };
 
-export function BalanceHero({ yoUsdBalance, apy, isLoading }: BalanceHeroProps) {
-  const formattedBalance = Number.parseFloat(yoUsdBalance).toLocaleString(undefined, {
+export function BalanceHero({ yoEthBalance, apy, isLoading }: BalanceHeroProps) {
+  const formattedBalance = Number.parseFloat(yoEthBalance).toLocaleString(undefined, {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 6,
   });
 
   return (
@@ -30,17 +30,17 @@ export function BalanceHero({ yoUsdBalance, apy, isLoading }: BalanceHeroProps) 
         <Skeleton className="mb-1 h-12 w-48 rounded-lg" />
       ) : (
         <View className="mb-1 flex-row items-baseline">
-          <Text className="font-bold text-5xl text-foreground">${formattedBalance}</Text>
+          <Text className="font-bold text-5xl text-foreground">{formattedBalance}</Text>
         </View>
       )}
 
-      {/* yoUSD Label */}
+      {/* yoETH Label */}
       {isLoading ? (
         <Skeleton className="mb-4 h-4 w-16 rounded" />
       ) : (
         <View className="mb-4 flex-row items-center gap-1">
-          <View className="h-2 w-2 rounded-full bg-primary" />
-          <Text className="text-muted-foreground text-sm">yoUSD</Text>
+          <View className="h-2 w-2 rounded-full bg-purple-500" />
+          <Text className="text-muted-foreground text-sm">yoETH</Text>
         </View>
       )}
 

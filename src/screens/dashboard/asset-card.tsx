@@ -6,8 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 
 type AssetCardProps = {
-  yoUsdBalance: string;
-  usdcBalance: string;
+  yoEthBalance: string;
+  ethBalance: string;
+  apy: string | undefined;
   isLoading: boolean;
 };
 
@@ -69,33 +70,33 @@ function AssetRow({ icon, name, symbol, balance, isLoading, iconBgClass = "bg-pr
   );
 }
 
-export function AssetCard({ yoUsdBalance, usdcBalance, isLoading }: AssetCardProps) {
+export function AssetCard({ yoEthBalance, ethBalance, apy, isLoading }: AssetCardProps) {
   return (
     <Card className="mx-4">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Your Assets</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        {/* yoUSD Row */}
+        {/* yoETH Row */}
         <AssetRow
-          balance={yoUsdBalance}
+          balance={yoEthBalance}
           icon={CoinsIcon}
-          iconBgClass="bg-blue-500/10"
+          iconBgClass="bg-purple-500/10"
           isLoading={isLoading}
-          name="yoUSD Vault"
-          symbol="Earning yield"
+          name="yoETH Vault"
+          symbol={apy ? `Earning ${apy}` : "Earning yield"}
         />
 
         {/* Divider */}
         <View className="h-px bg-border" />
 
-        {/* USDC Row */}
+        {/* ETH Row */}
         <AssetRow
-          balance={usdcBalance}
+          balance={ethBalance}
           icon={WalletIcon}
-          iconBgClass="bg-green-500/10"
+          iconBgClass="bg-indigo-500/10"
           isLoading={isLoading}
-          name="USDC"
+          name="ETH"
           symbol="Available to deposit"
         />
       </CardContent>

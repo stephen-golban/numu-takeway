@@ -1,21 +1,25 @@
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { useBiometricAuth } from "@/providers/biometric-auth";
 
 export default function useLockScreen() {
+  const router = useRouter();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { authenticate, biometricType, isLoading, unlock } = useBiometricAuth();
 
   const handleAuthenticate = useCallback(async () => {
     setIsAuthenticating(true);
-    try {
-      const success = await authenticate();
-      if (success) {
+    const success = await authenticate();
+    if (success) {
+      // Navigate first, then unlock in next frame to avoid hooks error
+      router.replace("/(protected)/dashboard");
+      requestAnimationFrame(() => {
         unlock();
-      }
-    } finally {
+      });
+    } else {
       setIsAuthenticating(false);
     }
-  }, [authenticate, unlock]);
+  }, [authenticate, unlock, router]);
 
   return {
     handleAuthenticate,

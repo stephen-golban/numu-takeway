@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
-import { cn } from "@/lib/utils";
 import { getBiometricIcon, getBiometricLabel } from "@/providers/biometric-auth";
 import useLockScreen from "@/screens/lock/hook";
 
@@ -37,16 +36,15 @@ export default function LockScreen() {
             accessibilityRole="button"
             accessibilityState={{ disabled: isAuthenticating, busy: isAuthenticating }}
             accessible
-            className="w-full flex-row gap-2"
+            className="h-auto w-full flex-col gap-2 py-4"
             disabled={isAuthenticating}
             onPress={handleAuthenticate}
-            size="lg"
           >
-            <Icon
-              as={isAuthenticating ? LoaderIcon : BiometricIcon}
-              className={cn("text-primary-foreground", isAuthenticating && "animate-spin")}
-              size={20}
-            />
+            {isAuthenticating ? (
+              <Icon as={LoaderIcon} className="animate-spin text-primary-foreground" size={32} />
+            ) : (
+              <Icon as={BiometricIcon} className="text-primary-foreground" size={32} />
+            )}
             <Text>Unlock with {biometricLabel}</Text>
           </Button>
         )}

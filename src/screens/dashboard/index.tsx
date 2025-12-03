@@ -4,7 +4,8 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert } from "@/components/ui/alert";
 import { BASE_CHAIN_ID } from "@/lib/appkit/chains";
-import { useVaultApy, useYoVaultBalances } from "@/lib/tanstack-query";
+import { useVaultApy, useYoEthVaultBalances } from "@/lib/tanstack-query";
+import { CONTRACTS } from "@/lib/yo-protocol/constants";
 import { AssetCard } from "./asset-card";
 import { BalanceHero } from "./balance-hero";
 import { QuickActions } from "./quick-actions";
@@ -16,21 +17,21 @@ type DashboardScreenProps = {
 export default function DashboardScreen({ chainId }: DashboardScreenProps) {
   const router = useRouter();
 
-  const balancesQuery = useYoVaultBalances();
-  const apyQuery = useVaultApy();
+  const ethBalancesQuery = useYoEthVaultBalances();
+  const ethApyQuery = useVaultApy(CONTRACTS.YO_ETH_VAULT);
 
-  const yoUsdBalance = balancesQuery.data?.yoUsd ?? "0";
-  const usdcBalance = balancesQuery.data?.usdc ?? "0";
-  const apy = apyQuery.data?.apy;
+  const yoEthBalance = ethBalancesQuery.data?.yoEth ?? "0";
+  const ethBalance = ethBalancesQuery.data?.eth ?? "0";
+  const ethApy = ethApyQuery.data?.apy;
 
-  const isLoading = balancesQuery.isLoading || apyQuery.isLoading;
-  const isRefetching = balancesQuery.isRefetching || apyQuery.isRefetching;
+  const isLoading = ethBalancesQuery.isLoading || ethApyQuery.isLoading;
+  const isRefetching = ethBalancesQuery.isRefetching || ethApyQuery.isRefetching;
   const isCorrectNetwork = chainId === BASE_CHAIN_ID;
 
   const handleRefresh = useCallback(() => {
-    balancesQuery.refetch();
-    apyQuery.refetch();
-  }, [balancesQuery, apyQuery]);
+    ethBalancesQuery.refetch();
+    ethApyQuery.refetch();
+  }, [ethBalancesQuery, ethApyQuery]);
 
   return (
     <SafeAreaView className="flex-1">
@@ -43,25 +44,25 @@ export default function DashboardScreen({ chainId }: DashboardScreenProps) {
         refreshControl={<RefreshControl onRefresh={handleRefresh} refreshing={isRefetching} />}
       >
         {/* Balance Hero Section */}
-        <BalanceHero apy={apy} isLoading={isLoading} yoUsdBalance={yoUsdBalance} />
+        <BalanceHero apy={ethApy} isLoading={isLoading} yoEthBalance={yoEthBalance} />
 
         {/* Quick Actions */}
         <QuickActions
           isLoading={isLoading}
-          onDeposit={() => router.push("/deposit")}
-          onWithdraw={() => router.push("/withdraw")}
+          onDeposit={() => router.push("/deposit-eth")}
+          onWithdraw={() => router.push("/withdraw-eth")}
         />
 
         {/* Error Display */}
-        {balancesQuery.error && (
+        {ethBalancesQuery.error && (
           <View className="px-4 pt-4">
-            <Alert description={balancesQuery.error.message} message="Error" variant="destructive" />
+            <Alert description={ethBalancesQuery.error.message} message="Error" variant="destructive" />
           </View>
         )}
 
         {/* Assets Section */}
-        <View className="pt-6">
-          <AssetCard isLoading={isLoading} usdcBalance={usdcBalance} yoUsdBalance={yoUsdBalance} />
+        <View className="gap-4 pt-6">
+          <AssetCard apy={ethApy} ethBalance={ethBalance} isLoading={isLoading} yoEthBalance={yoEthBalance} />
         </View>
       </ScrollView>
     </SafeAreaView>

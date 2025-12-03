@@ -40,8 +40,19 @@ function ActionButtonSkeleton({ variant }: { variant: "deposit" | "withdraw" }) 
   );
 }
 
+function getVariantStyles(variant: ActionButtonProps["variant"]) {
+  switch (variant) {
+    case "deposit":
+      return { bg: "bg-purple-500/10", text: "text-purple-600 dark:text-purple-500" };
+    case "withdraw":
+      return { bg: "bg-indigo-500/10", text: "text-indigo-600 dark:text-indigo-500" };
+    default:
+      return { bg: "bg-gray-500/10", text: "text-gray-600 dark:text-gray-500" };
+  }
+}
+
 function ActionButton({ icon, label, description, onPress, variant }: ActionButtonProps) {
-  const isDeposit = variant === "deposit";
+  const styles = getVariantStyles(variant);
 
   return (
     <Pressable
@@ -54,19 +65,8 @@ function ActionButton({ icon, label, description, onPress, variant }: ActionButt
     >
       <View className="items-center gap-2">
         {/* Icon Container */}
-        <View
-          className={cn(
-            "items-center justify-center rounded-full p-2",
-            isDeposit ? "bg-green-500/10" : "bg-blue-500/10"
-          )}
-        >
-          <Icon
-            as={icon}
-            className={cn(
-              "size-5",
-              isDeposit ? "text-green-600 dark:text-green-500" : "text-blue-600 dark:text-blue-500"
-            )}
-          />
+        <View className={cn("items-center justify-center rounded-full p-2", styles.bg)}>
+          <Icon as={icon} className={cn("size-5", styles.text)} />
         </View>
 
         {/* Label */}
@@ -92,14 +92,14 @@ export function QuickActions({ onDeposit, onWithdraw, isLoading }: QuickActionsP
   return (
     <View className="flex-row gap-3 px-4">
       <ActionButton
-        description="Add funds"
+        description="ETH → yoETH"
         icon={ArrowDownToLineIcon}
         label="Deposit"
         onPress={onDeposit}
         variant="deposit"
       />
       <ActionButton
-        description="Remove funds"
+        description="yoETH → ETH"
         icon={ArrowUpFromLineIcon}
         label="Withdraw"
         onPress={onWithdraw}
